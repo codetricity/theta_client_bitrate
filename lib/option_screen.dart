@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:http/http.dart' as http;
 
+import 'take_picture_screen.dart';
+
 class OptionScreen extends StatefulWidget {
   const OptionScreen({Key? key}) : super(key: key);
 
@@ -21,8 +23,9 @@ class _OptionScreenState extends State<OptionScreen> {
       appBar: AppBar(),
       body: Column(children: [
         Expanded(
-          flex: 2,
+          flex: 3,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -38,11 +41,20 @@ class _OptionScreenState extends State<OptionScreen> {
                       final info = await _thetaClientFlutter.getThetaInfo();
                       final thetaState =
                           await _thetaClientFlutter.getThetaState();
+                      final cameraOptions =
+                          await _thetaClientFlutter.getOptions([
+                        OptionNameEnum.captureMode,
+                        OptionNameEnum.wlanFrequency,
+                        OptionNameEnum.isGpsOn,
+                      ]);
                       setState(() {
                         response = 'model: ${info.model}\n'
                             'firmware: ${info.firmwareVersion}\n'
                             'serial number: ${info.serialNumber}\n'
-                            'battery: ${thetaState.batteryLevel}';
+                            'battery: ${thetaState.batteryLevel}\n'
+                            'mode: ${cameraOptions.captureMode}\n'
+                            'WiFi frequency: ${cameraOptions.wlanFrequency}\n'
+                            'GPS Enabled: ${cameraOptions.isGpsOn}';
                       });
                     },
                     child: const Text('camera', style: TextStyle(fontSize: 18)),
@@ -232,6 +244,241 @@ class _OptionScreenState extends State<OptionScreen> {
                       });
                     },
                     child: const Text('5.5K', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.filter = FilterEnum.hdr;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.filter]);
+                      setState(() {
+                        response =
+                            'filter set to ${responseOptions.filter.toString()}';
+                      });
+                    },
+                    child: const Text('HDR', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.filter = FilterEnum.off;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.filter]);
+                      setState(() {
+                        response =
+                            'HDR filter set to ${responseOptions.filter.toString()}';
+                      });
+                    },
+                    child: const Text('HDR',
+                        style: TextStyle(
+                            fontSize: 18,
+                            decoration: TextDecoration.lineThrough,
+                            decorationThickness: 3.0)),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const Text('timer',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureDelay = ExposureDelayEnum.delayOff;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureDelay]);
+                      setState(() {
+                        response =
+                            'timer set to ${responseOptions.exposureDelay.toString()}';
+                      });
+                    },
+                    child: const Text('off', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureDelay = ExposureDelayEnum.delay3;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureDelay]);
+                      setState(() {
+                        response =
+                            'timer set to ${responseOptions.exposureDelay.toString()}';
+                      });
+                    },
+                    child: const Text('3s', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureDelay = ExposureDelayEnum.delay5;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureDelay]);
+                      setState(() {
+                        response =
+                            'timer set to ${responseOptions.exposureDelay.toString()}';
+                      });
+                    },
+                    child: const Text('5s', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureDelay = ExposureDelayEnum.delay10;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureDelay]);
+                      setState(() {
+                        response =
+                            'timer set to ${responseOptions.exposureDelay.toString()}';
+                      });
+                    },
+                    child: const Text('10s', style: TextStyle(fontSize: 18)),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const Text(
+                    'mode',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.captureMode = CaptureModeEnum.image;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.captureMode]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child: const Text('image', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.captureMode = CaptureModeEnum.video;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.captureMode]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child: const Text('video', style: TextStyle(fontSize: 18)),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const Text(
+                    'EV',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureCompensation =
+                          ExposureCompensationEnum.zero;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureCompensation]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child: const Text('0', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureCompensation =
+                          ExposureCompensationEnum.p0_3;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureCompensation]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child: const Text('+.03', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureCompensation =
+                          ExposureCompensationEnum.p0_7;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureCompensation]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child: const Text('+.07', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.exposureCompensation =
+                          ExposureCompensationEnum.p1_0;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.exposureCompensation]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child: const Text('+1.0', style: TextStyle(fontSize: 18)),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () async {
+                      final body = {
+                        'name': 'camera.takePicture',
+                      };
+                      final cameraResponse = await http.post(
+                          Uri.parse('http://192.168.1.1/osc/commands/execute'),
+                          body: jsonEncode(body),
+                          headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                          });
+
+                      setState(() {
+                        response = cameraResponse.body;
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.photo_camera,
+                      size: 64,
+                    ),
                   ),
                 ],
               ),
