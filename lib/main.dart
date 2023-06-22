@@ -123,7 +123,7 @@ class Home extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('THETA Bitrate Tester'),
         ),
         body: Center(
           child: Column(
