@@ -1,8 +1,8 @@
-import 'package:demo_flutter/capture_video_screen.dart';
-import 'package:demo_flutter/file_list_screen.dart';
-import 'package:demo_flutter/message_box.dart';
-import 'package:demo_flutter/option_screen.dart';
-import 'package:demo_flutter/take_picture_screen.dart';
+import 'package:theta_bitrate/capture_video_screen.dart';
+import 'package:theta_bitrate/file_list_screen.dart';
+import 'package:theta_bitrate/message_box.dart';
+import 'package:theta_bitrate/option_screen.dart';
+import 'package:theta_bitrate/take_picture_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
