@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 import 'package:http/http.dart' as http;
 
-import 'take_picture_screen.dart';
 
 class OptionScreen extends StatefulWidget {
   const OptionScreen({Key? key}) : super(key: key);
