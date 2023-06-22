@@ -30,32 +30,22 @@ class _OptionScreenState extends State<OptionScreen> {
                     width: 20,
                   ),
                   const Text(
-                    'Get Info',
+                    'Info',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   TextButton(
                     onPressed: () async {
                       final info = await _thetaClientFlutter.getThetaInfo();
-                      print(info.firmwareVersion);
+                      final thetaState =
+                          await _thetaClientFlutter.getThetaState();
                       setState(() {
                         response = 'model: ${info.model}\n'
                             'firmware: ${info.firmwareVersion}\n'
-                            'serial number: ${info.serialNumber}';
+                            'serial number: ${info.serialNumber}\n'
+                            'battery: ${thetaState.batteryLevel}';
                       });
                     },
                     child: const Text('camera', style: TextStyle(fontSize: 18)),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final options = await _thetaClientFlutter
-                          .getOptions([OptionNameEnum.fileFormat]);
-                      setState(() {
-                        response =
-                            'file format: ${options.fileFormat.toString()}';
-                      });
-                    },
-                    child: const Text('resolution',
-                        style: TextStyle(fontSize: 18)),
                   ),
                 ],
               ),
@@ -192,8 +182,58 @@ class _OptionScreenState extends State<OptionScreen> {
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [],
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const Text('image',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  TextButton(
+                    onPressed: () async {
+                      final options = await _thetaClientFlutter.getOptions([
+                        OptionNameEnum.fileFormat,
+                        OptionNameEnum.filter,
+                        OptionNameEnum.exposureCompensation,
+                      ]);
+                      setState(() {
+                        response =
+                            'file format: ${options.fileFormat.toString()}\n'
+                            'filter: ${options.filter.toString()}\n'
+                            'EV Compensation: ${options.exposureCompensation.toString()}\n';
+                      });
+                    },
+                    child: const Text('GET', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.fileFormat = FileFormatEnum.image_11K;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.fileFormat]);
+                      setState(() {
+                        response =
+                            'set to ${responseOptions.fileFormat.toString()}';
+                      });
+                    },
+                    child: const Text('11K', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.fileFormat = FileFormatEnum.image_5_5K;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.fileFormat]);
+                      setState(() {
+                        response =
+                            'set to ${responseOptions.fileFormat.toString()}';
+                      });
+                    },
+                    child: const Text('5.5K', style: TextStyle(fontSize: 18)),
+                  ),
+                ],
               ),
             ],
           ),
