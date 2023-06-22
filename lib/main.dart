@@ -14,7 +14,7 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  runApp(const MaterialApp(home: MyApp()));
+  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -93,6 +93,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'title',
       home: Home(
         platformVersion: _platformVersion,
