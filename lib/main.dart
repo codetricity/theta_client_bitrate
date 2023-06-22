@@ -10,7 +10,11 @@ import 'package:flutter/services.dart';
 import 'package:theta_client_flutter/digest_auth.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   runApp(const MaterialApp(home: MyApp()));
 }
 
