@@ -22,53 +22,83 @@ class _OptionScreenState extends State<OptionScreen> {
       body: Column(children: [
         Expanded(
           flex: 2,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
             children: [
-              TextButton(
-                onPressed: () async {
-                  final info = await _thetaClientFlutter.getThetaInfo();
-                  print(info.firmwareVersion);
-                  setState(() {
-                    response = 'model: ${info.model}\n'
-                        'firmware: ${info.firmwareVersion}\n'
-                        'serial number: ${info.serialNumber}';
-                  });
-                },
-                child: const Text('info'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final options = await _thetaClientFlutter
-                      .getOptions([OptionNameEnum.fileFormat]);
-                  setState(() {
-                    response = 'file format: ${options.fileFormat.toString()}';
-                  });
-                },
-                child: const Text('file format'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final body = {
-                    'name': 'camera.getOptions',
-                    'parameters': {
-                      'optionNames': ['_bitrate']
-                    }
-                  };
-                  final cameraResponse = await http.post(
-                      Uri.parse('http://192.168.1.1/osc/commands/execute'),
-                      body: jsonEncode(body),
-                      headers: {
-                        'Content-Type': 'application/json;charset=utf-8'
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      final info = await _thetaClientFlutter.getThetaInfo();
+                      print(info.firmwareVersion);
+                      setState(() {
+                        response = 'model: ${info.model}\n'
+                            'firmware: ${info.firmwareVersion}\n'
+                            'serial number: ${info.serialNumber}';
                       });
-                  final bodyMap = jsonDecode(cameraResponse.body);
-                  final options = bodyMap['results']['options'];
-                  setState(() {
-                    response = 'bitrate: ${options['_bitrate']}';
-                  });
-                },
-                child: const Text('bitrate'),
+                    },
+                    child: const Text('info'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.fileFormat]);
+                      setState(() {
+                        response =
+                            'file format: ${options.fileFormat.toString()}';
+                      });
+                    },
+                    child: const Text('file format'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final body = {
+                        'name': 'camera.getOptions',
+                        'parameters': {
+                          'optionNames': ['_bitrate']
+                        }
+                      };
+                      final cameraResponse = await http.post(
+                          Uri.parse('http://192.168.1.1/osc/commands/execute'),
+                          body: jsonEncode(body),
+                          headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                          });
+                      final bodyMap = jsonDecode(cameraResponse.body);
+                      final options = bodyMap['results']['options'];
+                      setState(() {
+                        response = 'bitrate: ${options['_bitrate']}';
+                      });
+                    },
+                    child: const Text('bitrate'),
+                  ),
+                ],
               ),
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () async {
+                        final body = {
+                          'name': 'camera.setOptions',
+                          'parameters': {
+                            'options': {'_bitrate': '1048576'}
+                          }
+                        };
+                        final cameraResponse = await http.post(
+                            Uri.parse(
+                                'http://192.168.1.1/osc/commands/execute'),
+                            body: jsonEncode(body),
+                            headers: {
+                              'Content-Type': 'application/json;charset=utf-8'
+                            });
+                        final bodyMap = jsonDecode(cameraResponse.body);
+                        setState(() {
+                          response = bodyMap.toString();
+                        });
+                      },
+                      child: Text('1M bitrate'))
+                ],
+              )
             ],
           ),
         ),
