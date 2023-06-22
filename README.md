@@ -1,10 +1,9 @@
-# Flutter demo for theta-client
+# Modification of Flutter demo for theta-client
 
-A simple sample Flutter application using [theta-client](https://github.com/ricohapi/theta-client).
+Example of setting options on the RICOH THETA 360 camera using the open source SDK
+[theta-client](https://github.com/ricohapi/theta-client).
 
-## Objective
-
-* Show developers how to use Theta client.
+This is a modification of the theta-client demo for Flutter.
 
 ## Functions
 
@@ -14,7 +13,8 @@ A simple sample Flutter application using [theta-client](https://github.com/rico
 * Capture video with Theta.
 
 ## building and execution
-Execute following command to build and execute Flutter.
-  ```
-  $ flutter run
-  ```
+
+```text
+flutter pub get
+flutter run
+```
