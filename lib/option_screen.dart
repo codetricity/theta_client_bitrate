@@ -42,17 +42,25 @@ class _OptionScreenState extends State<OptionScreen> {
 
                       var cameraOptions = await _thetaClientFlutter.getOptions([
                         OptionNameEnum.captureMode,
-                        OptionNameEnum.wlanFrequency,
                       ]);
 
                       var currentResponse = 'model: ${info.model}\n'
                           'firmware: ${info.firmwareVersion}\n'
                           'serial number: ${info.serialNumber}\n'
                           'battery: ${thetaState.batteryLevel}\n'
-                          'mode: ${cameraOptions.captureMode}\n'
-                          'WiFi frequency: ${cameraOptions.wlanFrequency}';
-
+                          'mode: ${cameraOptions.captureMode}';
+                      print(info.model);
                       switch (info.model) {
+                        case 'RICOH THETA SC2':
+                          cameraOptions = await _thetaClientFlutter.getOptions([
+                            OptionNameEnum.captureMode,
+                          ]);
+                          currentResponse = 'model: ${info.model}\n'
+                              'firmware: ${info.firmwareVersion}\n'
+                              'serial number: ${info.serialNumber}\n'
+                              'battery: ${thetaState.batteryLevel}\n'
+                              'mode: ${cameraOptions.captureMode}';
+                          break;
                         case 'RICOH THETA X':
                           cameraOptions = await _thetaClientFlutter.getOptions([
                             OptionNameEnum.captureMode,
@@ -66,6 +74,19 @@ class _OptionScreenState extends State<OptionScreen> {
                               'mode: ${cameraOptions.captureMode}\n'
                               'WiFi frequency: ${cameraOptions.wlanFrequency}\n'
                               'GPS Enabled: ${cameraOptions.isGpsOn}';
+                          break;
+                        case 'RICOH THETA Z1':
+                        case 'RICOH THETA V':
+                          cameraOptions = await _thetaClientFlutter.getOptions([
+                            OptionNameEnum.captureMode,
+                            OptionNameEnum.wlanFrequency,
+                          ]);
+                          currentResponse = 'model: ${info.model}\n'
+                              'firmware: ${info.firmwareVersion}\n'
+                              'serial number: ${info.serialNumber}\n'
+                              'battery: ${thetaState.batteryLevel}\n'
+                              'mode: ${cameraOptions.captureMode}\n'
+                              'WiFi frequency: ${cameraOptions.wlanFrequency}';
                           break;
                         default:
                           break;
