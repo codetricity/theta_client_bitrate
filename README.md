@@ -21,6 +21,14 @@ THETA X, 11K, HDR
 | 10,485,760 | 10.472MB |
 | 20971520 | 21.047MB |
 
+## file listing with file size
+
+![file listing](readme_assets/file_list.png)
+
+## 360 image navigation
+
+![image with navigation](readme_assets/navigation.gif)
+
 ## setup
 
 ![distance](readme_assets/distance.png)

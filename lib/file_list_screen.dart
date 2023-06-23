@@ -3,6 +3,7 @@ import 'package:theta_bitrate/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
+import 'package:numeral/numeral.dart';
 
 import 'message_box.dart';
 
@@ -56,6 +57,9 @@ class _FileListScreen extends State<FileListScreen> {
           itemBuilder: (context, index) {
             return ListTile(
               title: Text(_fileInfoList[index].name),
+              subtitle: Text(
+                  'size: ${Numeral(_fileInfoList[index].size).format(fractionDigits: 1)}\n'
+                  '${_fileInfoList[index].dateTime}'),
               onTap: () {
                 debugPrint('index $index');
                 final fileUrl = _fileInfoList[index].fileUrl;
