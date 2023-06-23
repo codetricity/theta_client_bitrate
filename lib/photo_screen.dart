@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:panorama/panorama.dart';
 
 class PhotoScreen extends StatelessWidget {
   final String name;
   final String fileUrl;
-  const PhotoScreen({Key? key,
+  const PhotoScreen({
+    Key? key,
     required this.name,
     required this.fileUrl,
   }) : super(key: key);
@@ -11,12 +13,9 @@ class PhotoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text('Photo: $name')
-        ),
-      body: Container(
-        alignment: Alignment.center,
-        child: Image.network(
+        appBar: AppBar(title: Text('Photo: $name')),
+        body: Panorama(
+            child: Image.network(
           fileUrl,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
@@ -27,9 +26,6 @@ class PhotoScreen extends StatelessWidget {
               color: Colors.white,
             );
           },
-        )
-      )
-    );
+        )));
   }
-
 }
