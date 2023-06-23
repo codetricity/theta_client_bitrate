@@ -39,20 +39,40 @@ class _OptionScreenState extends State<OptionScreen> {
                       final info = await _thetaClientFlutter.getThetaInfo();
                       final thetaState =
                           await _thetaClientFlutter.getThetaState();
-                      final cameraOptions =
-                          await _thetaClientFlutter.getOptions([
+
+                      var cameraOptions = await _thetaClientFlutter.getOptions([
                         OptionNameEnum.captureMode,
                         OptionNameEnum.wlanFrequency,
-                        OptionNameEnum.isGpsOn,
                       ]);
+
+                      var currentResponse = 'model: ${info.model}\n'
+                          'firmware: ${info.firmwareVersion}\n'
+                          'serial number: ${info.serialNumber}\n'
+                          'battery: ${thetaState.batteryLevel}\n'
+                          'mode: ${cameraOptions.captureMode}\n'
+                          'WiFi frequency: ${cameraOptions.wlanFrequency}';
+
+                      switch (info.model) {
+                        case 'RICOH THETA X':
+                          cameraOptions = await _thetaClientFlutter.getOptions([
+                            OptionNameEnum.captureMode,
+                            OptionNameEnum.wlanFrequency,
+                            OptionNameEnum.isGpsOn,
+                          ]);
+                          currentResponse = 'model: ${info.model}\n'
+                              'firmware: ${info.firmwareVersion}\n'
+                              'serial number: ${info.serialNumber}\n'
+                              'battery: ${thetaState.batteryLevel}\n'
+                              'mode: ${cameraOptions.captureMode}\n'
+                              'WiFi frequency: ${cameraOptions.wlanFrequency}\n'
+                              'GPS Enabled: ${cameraOptions.isGpsOn}';
+                          break;
+                        default:
+                          break;
+                      }
+
                       setState(() {
-                        response = 'model: ${info.model}\n'
-                            'firmware: ${info.firmwareVersion}\n'
-                            'serial number: ${info.serialNumber}\n'
-                            'battery: ${thetaState.batteryLevel}\n'
-                            'mode: ${cameraOptions.captureMode}\n'
-                            'WiFi frequency: ${cameraOptions.wlanFrequency}\n'
-                            'GPS Enabled: ${cameraOptions.isGpsOn}';
+                        response = currentResponse;
                       });
                     },
                     child: const Text('camera', style: TextStyle(fontSize: 18)),
