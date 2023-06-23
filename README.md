@@ -1,5 +1,7 @@
 # Bitrate Image Tester
 
+![feature graphic](assets/feature_graphic.png)
+
 ![screenshot](readme_assets/screenshot.png)
 
 ## balancing file size and image clarity
