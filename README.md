@@ -69,6 +69,19 @@ The X benefits from better HDR processing as well as higher resolution.
 ### SC2
 
 We can likely take a better shot from the SC2.  The lighting was difficult as sun was
-coming in from the window. 
+coming in from the window.
 
 ![SC2 car shot](readme_assets/sc2.png)
+
+## build information
+
+```text
+java --version
+openjdk 19.0.2 2023-01-17
+OpenJDK Runtime Environment (build 19.0.2+7-Ubuntu-0ubuntu322.04)
+OpenJDK 64-Bit Server VM (build 19.0.2+7-Ubuntu-0ubuntu322.04, mixed mode, sharing)
+
+echo $JAVA_HOME
+/usr/lib/jvm/java-19-openjdk-amd64
+
+```
