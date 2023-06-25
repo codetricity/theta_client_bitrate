@@ -449,7 +449,7 @@ class _OptionScreenState extends State<OptionScreen> {
                           .getOptions([OptionNameEnum.exposureCompensation]);
                       setState(() {
                         response =
-                            'mode: ${responseOptions.captureMode.toString()}';
+                            'EV: ${responseOptions.exposureCompensation.toString()}';
                       });
                     },
                     child: const Text('0', style: TextStyle(fontSize: 18)),
@@ -464,7 +464,7 @@ class _OptionScreenState extends State<OptionScreen> {
                           .getOptions([OptionNameEnum.exposureCompensation]);
                       setState(() {
                         response =
-                            'mode: ${responseOptions.captureMode.toString()}';
+                            'EV: ${responseOptions.exposureCompensation.toString()}';
                       });
                     },
                     child: const Text('+.03', style: TextStyle(fontSize: 18)),
@@ -479,7 +479,7 @@ class _OptionScreenState extends State<OptionScreen> {
                           .getOptions([OptionNameEnum.exposureCompensation]);
                       setState(() {
                         response =
-                            'mode: ${responseOptions.captureMode.toString()}';
+                            'EV: ${responseOptions.exposureCompensation.toString()}';
                       });
                     },
                     child: const Text('+.07', style: TextStyle(fontSize: 18)),
@@ -494,7 +494,7 @@ class _OptionScreenState extends State<OptionScreen> {
                           .getOptions([OptionNameEnum.exposureCompensation]);
                       setState(() {
                         response =
-                            'mode: ${responseOptions.captureMode.toString()}';
+                            'EV: ${responseOptions.exposureCompensation.toString()}';
                       });
                     },
                     child: const Text('+1.0', style: TextStyle(fontSize: 18)),
