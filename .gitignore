@@ -1,4 +1,5 @@
 key.properties
+android_keystore.jks
 **/android/key.properties
 # Miscellaneous
 *.class
