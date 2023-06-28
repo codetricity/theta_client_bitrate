@@ -317,6 +317,52 @@ class _Z1ScreenState extends State<Z1Screen> {
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          final options = Options();
+                          options.captureMode = CaptureModeEnum.video;
+                          await _thetaClientFlutter.deleteAllVideoFiles();
+                          final cameraResponse = await _thetaClientFlutter
+                              .listFiles(FileTypeEnum.all, 50);
+                          final fileList = cameraResponse.fileList;
+                          var filenameList = [];
+                          for (var fileInfo in fileList) {
+                            filenameList.add(fileInfo.name);
+                          }
+                          setState(() {
+                            response = 'deleting video files\n'
+                                'last 50 files in camera\n'
+                                '$filenameList';
+                          });
+                        },
+                        child: const Text('delete all video files',
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final options = Options();
+                          options.captureMode = CaptureModeEnum.video;
+                          await _thetaClientFlutter.deleteAllImageFiles();
+                          final cameraResponse = await _thetaClientFlutter
+                              .listFiles(FileTypeEnum.all, 50);
+                          final fileList = cameraResponse.fileList;
+                          var filenameList = [];
+                          for (var fileInfo in fileList) {
+                            filenameList.add(fileInfo.name);
+                          }
+                          setState(() {
+                            response = 'deleting image files\n'
+                                'last 50 files in camera\n'
+                                '$filenameList';
+                          });
+                        },
+                        child: const Text('delete all image files',
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -325,16 +371,11 @@ class _Z1ScreenState extends State<Z1Screen> {
             flex: 2,
             child: Container(
               color: Colors.orange[50],
-              child: Padding(
+              child: SingleChildScrollView(
+                  child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(child: Text(response)),
-                  ],
-                ),
-              ),
+                child: Text(response),
+              )),
             ),
           ),
         ],
