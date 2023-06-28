@@ -138,7 +138,7 @@ class _MyAppState extends State<MyApp> {
                 icon: Icon(Icons.settings), label: 'Options'),
             BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.z),
-              label: 'Z1 3.01',
+              label: 'Z1 video',
             ),
             BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.x),
