@@ -19,7 +19,7 @@ THETA X, 11K, HDR
 | 1,048,576 |  4.956MB |
 | 5,242,880 | 6.594MB |
 | 10,485,760 | 10.472MB |
-| 20971520 | 21.047MB |
+| 20,971,520 | 21.047MB |
 
 ## file listing with file size
 
@@ -82,14 +82,14 @@ THETA X, 11K, HDR
 | 1,048,576 |  6MB |![X-1M-nohdr](readme_assets/R0010176.JPG) |
 | 5,242,880 | 7.2MB |![X-1M-nohdr](readme_assets/R0010177.JPG) |
 | 10,485,760 | 11.2MB |![X-1M-nohdr](readme_assets/R0010178.JPG) |
-| 20,971520 | 19.5MB |![X-1M-nohdr](readme_assets/R0010179.JPG) |
+| 20,971,520 | 19.5MB |![X-1M-nohdr](readme_assets/R0010179.JPG) |
 
 | bitrate - HDR | filesize |  |
 | ------- | -------- | -------- |
 | 1,048,576 |  4.9MB |![X-1M-nohdr](readme_assets/R0010180.JPG) |
 | 5,242,880 | 6.6MB |![X-1M-nohdr](readme_assets/R0010181.JPG) |
 | 10,485,760 | 11.4MB |![X-1M-nohdr](readme_assets/R0010182.JPG) |
-| 20,971520 | 21.4MB |![X-1M-nohdr](readme_assets/R0010183.JPG) |
+| 20,971,520 | 21.4MB |![X-1M-nohdr](readme_assets/R0010183.JPG) |
 
 SC2, 5.7K, no HDR
 
