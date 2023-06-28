@@ -73,7 +73,7 @@ coming in from the window.
 
 ![SC2 car shot](readme_assets/sc2.png)
 
-### Full size images from car interior
+### Full size images from car interior (can be downloaded for close inspection)
 
 THETA X, 11K, HDR
 
