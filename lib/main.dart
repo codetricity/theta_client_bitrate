@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:theta_bitrate/z1_screen.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'x_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +35,7 @@ class _MyAppState extends State<MyApp> {
   bool _initializing = false;
 
   final String endpoint = 'http://192.168.1.1:80/';
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -90,16 +95,59 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _onItemTapped(int index) {
+    _selectedIndex = index;
+    setState(() {
+      switch (index) {
+        case 0:
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const OptionScreen()));
+          break;
+        case 1:
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const Z1Screen()));
+          break;
+        case 2:
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const XScreen()));
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'title',
-      home: Home(
-        platformVersion: _platformVersion,
-        isInitialized: _isInitTheta,
-        connectTheta: initTheta,
-        thetaClientFlutter: _thetaClientFlutter,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('THETA Bitrate Tester'),
+        ),
+        body: Home(
+          platformVersion: _platformVersion,
+          isInitialized: _isInitTheta,
+          connectTheta: initTheta,
+          thetaClientFlutter: _thetaClientFlutter,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Options'),
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.z),
+              label: 'Z1 3.01',
+            ),
+            BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.x),
+              label: 'X',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
@@ -122,62 +170,58 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     String camera = isInitialized ? 'connected!' : 'disconnected';
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('THETA Bitrate Tester'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Running on: $platformVersion\n'),
-              Text('Camera: $camera\n'),
-              TextButton(
-                onPressed: isInitialized
-                    ? null
-                    : () {
-                        connectTheta();
-                      },
-                child: const Text('Connect'),
-              ),
-              TextButton(
-                onPressed: !isInitialized
-                    ? null
-                    : () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const OptionScreen()));
-                      },
-                child: const Text('Options'),
-              ),
-              TextButton(
-                onPressed: !isInitialized
-                    ? null
-                    : () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const TakePictureScreen()));
-                      },
-                child: const Text('Take Picture'),
-              ),
-              TextButton(
-                onPressed: !isInitialized
-                    ? null
-                    : () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const CaptureVideoScreen()));
-                      },
-                child: const Text('Capture Video'),
-              ),
-              TextButton(
-                onPressed: !isInitialized
-                    ? null
-                    : () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const FileListScreen()));
-                      },
-                child: const Text('File List'),
-              ),
-            ],
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Running on: $platformVersion\n'),
+          Text('Camera: $camera\n'),
+          TextButton(
+            onPressed: isInitialized
+                ? null
+                : () {
+                    connectTheta();
+                  },
+            child: const Text('Connect'),
           ),
-        ));
+          // TextButton(
+          //   onPressed: !isInitialized
+          //       ? null
+          //       : () {
+          //           Navigator.of(context).push(MaterialPageRoute(
+          //               builder: (_) => const OptionScreen()));
+          //         },
+          //   child: const Text('Options'),
+          // ),
+          TextButton(
+            onPressed: !isInitialized
+                ? null
+                : () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const TakePictureScreen()));
+                  },
+            child: const Text('Take Picture'),
+          ),
+          TextButton(
+            onPressed: !isInitialized
+                ? null
+                : () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const CaptureVideoScreen()));
+                  },
+            child: const Text('Capture Video'),
+          ),
+          TextButton(
+            onPressed: !isInitialized
+                ? null
+                : () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const FileListScreen()));
+                  },
+            child: const Text('File List'),
+          ),
+        ],
+      ),
+    );
   }
 }
