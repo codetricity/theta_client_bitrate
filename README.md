@@ -101,13 +101,13 @@ Main observations
 ### SC2, 5.7K, no HDR
 
 | filesize | |
-| ------- | ------- | |
+| ------- | ------- | 
 |  4.2MB |![SC2-nohdr](test_images/SC2/R0010010-SC2-NOHDR.JPG) |
 
 ### SC2, 5.7K, HDR
 
 | filesize | |
-| ------- | ------- | |
+| ------- | ------- | 
 |  4.2MB |![SC2-hdr](test_images/SC2/R0010011-SC2-HDR.JPG) |
 
 ## file listing with file size
