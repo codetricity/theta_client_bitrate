@@ -75,6 +75,10 @@ coming in from the window.
 
 ### Full size images from car interior (can be downloaded for close inspection)
 
+Main observations
+* Changing bitrate makes a significant difference in filesize but not visible quality
+* X quality of auto interior shots is noticably better than SC2
+
 THETA X, 11K, HDR
 
 | bitrate - no HDR | filesize |  |
