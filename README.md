@@ -76,10 +76,11 @@ coming in from the window.
 ### Full size images from car interior (can be downloaded for close inspection)
 
 Main observations
+
 * Changing bitrate makes a significant difference in filesize but not visible quality
 * X quality of auto interior shots is noticably better than SC2
 
-THETA X, 11K, HDR
+### THETA X, 11K, not using HDR
 
 | bitrate - no HDR | filesize |  |
 | ------- | -------- | -------- |
@@ -88,6 +89,8 @@ THETA X, 11K, HDR
 | 10,485,760 | 11.2MB |![X-10M-nohdr](test_images/X/R0010178-10M.JPG) |
 | 20,971,520 | 19.5MB |![X-21M-nohdr](test_images/X/R0010179-21M.JPG) |
 
+### THETA X, 11K, using HDR
+
 | bitrate - HDR | filesize |  |
 | ------- | -------- | -------- |
 | 1,048,576 |  4.9MB |![X-1M-nohdr](test_images/X/R0010180-1M.JPG) |
@@ -95,23 +98,21 @@ THETA X, 11K, HDR
 | 10,485,760 | 11.4MB |![X-10M-nohdr](test_images/X/R0010182-10M.JPG) |
 | 20,971,520 | 21.4MB |![X-21M-nohdr](test_images/X/R0010183-21M.JPG) |
 
-SC2, 5.7K, no HDR
+### SC2, 5.7K, no HDR
 
 | filesize | |
-| ------- | ------- | 
+| ------- | ------- | |
 |  4.2MB |![SC2-nohdr](test_images/SC2/R0010010-SC2-NOHDR.JPG) |
 
-SC2, 5.7K, HDR
+### SC2, 5.7K, HDR
 
 | filesize | |
-| ------- | ------- | 
+| ------- | ------- | |
 |  4.2MB |![SC2-hdr](test_images/SC2/R0010011-SC2-HDR.JPG) |
-
 
 ## file listing with file size
 
 ![file listing](readme_assets/file_list.png)
-
 
 ## build information
 
