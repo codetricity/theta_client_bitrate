@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 class XScreen extends StatefulWidget {
   const XScreen({super.key});
@@ -12,6 +13,7 @@ class XScreen extends StatefulWidget {
 
 class _XScreenState extends State<XScreen> {
   String response = 'response';
+  final _thetaClientFlutter = ThetaClientFlutter();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,10 @@ class _XScreenState extends State<XScreen> {
             flex: 2,
             child: Column(
               children: [
+                const Text(
+                  'Camera Must be in Image Mode',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 Row(
                   children: [
                     TextButton(
@@ -203,7 +209,76 @@ class _XScreenState extends State<XScreen> {
                       ),
                     ),
                   ],
-                )
+                ),
+                const Divider(
+                  color: Colors.black,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  'Camera Must be in Video Mode',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    TextButton(
+                        onPressed: () async {
+                          final body = {
+                            'name': 'camera.setOptions',
+                            'parameters': {
+                              'options': {'captureMode': "video"}
+                            }
+                          };
+                          final cameraResponse = await http.post(
+                              Uri.parse(
+                                  'http://192.168.1.1/osc/commands/execute'),
+                              body: jsonEncode(body),
+                              headers: {
+                                'Content-Type': 'application/json;charset=utf-8'
+                              });
+                          final bodyMap = jsonDecode(cameraResponse.body);
+                          setState(() {
+                            response = bodyMap.toString();
+                          });
+                        },
+                        child: const Text(
+                          'video mode',
+                          style: TextStyle(fontSize: 18),
+                        )),
+                    TextButton(
+                      onPressed: () async {
+                        final body = {
+                          'name': 'camera.setOptions',
+                          'parameters': {
+                            'options': {
+                              'fileFormat': {
+                                "type": "mp4",
+                                "width": 7680,
+                                "height": 3840,
+                                "_codec": "H.264/MPEG-4 AVC",
+                                "_frameRate": 5
+                              }
+                            }
+                          }
+                        };
+                        final cameraResponse = await http.post(
+                            Uri.parse(
+                                'http://192.168.1.1/osc/commands/execute'),
+                            body: jsonEncode(body),
+                            headers: {
+                              'Content-Type': 'application/json;charset=utf-8'
+                            });
+                        final bodyMap = jsonDecode(cameraResponse.body);
+                        setState(() {
+                          response = bodyMap.toString();
+                        });
+                      },
+                      child: const Text(
+                        '8K 5fps',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
