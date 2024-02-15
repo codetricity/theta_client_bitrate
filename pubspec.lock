@@ -354,7 +354,7 @@ packages:
       path: "packages/theta_client_flutter"
       relative: true
     source: path
-    version: "1.2.0"
+    version: "1.7.1"
   typed_data:
     dependency: transitive
     description:
@@ -436,5 +436,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
+  dart: ">=3.2.3 <4.0.0"
   flutter: ">=3.3.0"

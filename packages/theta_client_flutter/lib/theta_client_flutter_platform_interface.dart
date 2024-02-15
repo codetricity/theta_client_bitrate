@@ -10,7 +10,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static ThetaClientFlutterPlatform _instance = MethodChannelThetaClientFlutter();
+  static ThetaClientFlutterPlatform _instance =
+      MethodChannelThetaClientFlutter();
 
   /// The default instance of [ThetaClientFlutterPlatform] to use.
   ///
@@ -29,7 +30,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<void> initialize(String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
+  Future<void> initialize(
+      String endpoint, ThetaConfig? config, ThetaTimeout? timeout) {
     throw UnimplementedError('initialize() has not been implemented.');
   }
 
@@ -39,6 +41,10 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
 
   Future<void> restoreSettings() {
     throw UnimplementedError('restoreSettings() has not been implemented.');
+  }
+
+  Future<ThetaModel?> getThetaModel() {
+    throw UnimplementedError('getThetaModel() has not been implemented.');
   }
 
   Future<ThetaInfo> getThetaInfo() {
@@ -53,7 +59,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getLivePreview() has not been implemented.');
   }
 
-  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount, int startPosition, StorageEnum? storage) {
+  Future<ThetaFiles> listFiles(FileTypeEnum fileType, int entryCount,
+      int startPosition, StorageEnum? storage) {
     throw UnimplementedError('listFiles() has not been implemented.');
   }
 
@@ -77,7 +84,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
   }
 
   Future<void> getPhotoCaptureBuilder() {
-    throw UnimplementedError('getPhotoCaptureBuilder() has not been implemented.');
+    throw UnimplementedError(
+        'getPhotoCaptureBuilder() has not been implemented.');
   }
 
   Future<void> buildPhotoCapture(Map<String, dynamic> options) {
@@ -88,20 +96,175 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('takePicture() has not been implemented.');
   }
 
+  Future<void> getTimeShiftCaptureBuilder() {
+    throw UnimplementedError(
+        'getTimeShiftCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildTimeShiftCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildTimeShiftCapture() has not been implemented.');
+  }
+
+  Future<String?> startTimeShiftCapture(void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startTimeShiftCapture() has not been implemented.');
+  }
+
+  Future<void> stopTimeShiftCapture() {
+    throw UnimplementedError(
+        'stopTimeShiftCapture() has not been implemented.');
+  }
+
   Future<void> getVideoCaptureBuilder() {
-    throw UnimplementedError('getVideoCaptureBuilder() has not been implemented.');
+    throw UnimplementedError(
+        'getVideoCaptureBuilder() has not been implemented.');
   }
 
   Future<void> buildVideoCapture(Map<String, dynamic> options) {
     throw UnimplementedError('buildVideoCapture() has not been implemented.');
   }
 
-  Future<String?> startVideoCapture() {
+  Future<String?> startVideoCapture(
+      void Function(Exception exception)? onStopFailed) {
     throw UnimplementedError('startVideoCapture() has not been implemented.');
   }
 
   Future<void> stopVideoCapture() {
     throw UnimplementedError('stopVideoCapture() has not been implemented.');
+  }
+
+  Future<void> getLimitlessIntervalCaptureBuilder() {
+    throw UnimplementedError(
+        'getLimitlessIntervalCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildLimitlessIntervalCapture(Map<String, dynamic> options) {
+    throw UnimplementedError(
+        'buildLimitlessIntervalCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startLimitlessIntervalCapture(
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startLimitlessIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> stopLimitlessIntervalCapture() {
+    throw UnimplementedError(
+        'stopLimitlessIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> getShotCountSpecifiedIntervalCaptureBuilder(int shotCount) {
+    throw UnimplementedError(
+        'getShotCountSpecifiedIntervalCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildShotCountSpecifiedIntervalCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildShotCountSpecifiedIntervalCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startShotCountSpecifiedIntervalCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startShotCountSpecifiedIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> stopShotCountSpecifiedIntervalCapture() {
+    throw UnimplementedError(
+        'stopShotCountSpecifiedIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> getCompositeIntervalCaptureBuilder(int shootingTimeSec) {
+    throw UnimplementedError(
+        'getCompositeIntervalCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildCompositeIntervalCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildCompositeIntervalCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startCompositeIntervalCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startCompositeIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> stopCompositeIntervalCapture() {
+    throw UnimplementedError(
+        'stopCompositeIntervalCapture() has not been implemented.');
+  }
+
+  Future<void> getBurstCaptureBuilder(
+      BurstCaptureNumEnum burstCaptureNum,
+      BurstBracketStepEnum burstBracketStep,
+      BurstCompensationEnum burstCompensation,
+      BurstMaxExposureTimeEnum burstMaxExposureTime,
+      BurstEnableIsoControlEnum burstEnableIsoControl,
+      BurstOrderEnum burstOrder) {
+    throw UnimplementedError(
+        'getBurstCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildBurstCapture(Map<String, dynamic> options, int interval) {
+    throw UnimplementedError('buildBurstCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startBurstCapture(void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError('startBurstCapture() has not been implemented.');
+  }
+
+  Future<void> stopBurstCapture() {
+    throw UnimplementedError('stopBurstCapture() has not been implemented.');
+  }
+
+  Future<void> getMultiBracketCaptureBuilder() {
+    throw UnimplementedError(
+        'getMultiBracketCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildMultiBracketCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startMultiBracketCapture(
+      void Function(double)? onProgress,
+      void Function(Exception exception)? onStopFailed) {
+    throw UnimplementedError(
+        'startMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<void> stopMultiBracketCapture() {
+    throw UnimplementedError(
+        'stopMultiBracketCapture() has not been implemented.');
+  }
+
+  Future<void> getContinuousCaptureBuilder() {
+    throw UnimplementedError(
+        'getContinuousCaptureBuilder() has not been implemented.');
+  }
+
+  Future<void> buildContinuousCapture(
+      Map<String, dynamic> options, int interval) {
+    throw UnimplementedError(
+        'buildContinuousCapture() has not been implemented.');
+  }
+
+  Future<List<String>?> startContinuousCapture(
+      void Function(double)? onProgress) {
+    throw UnimplementedError(
+        'startContinuousCapture() has not been implemented.');
   }
 
   Future<Options> getOptions(List<OptionNameEnum> optionNames) {
@@ -124,7 +287,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('stopSelfTimer() has not been implemented.');
   }
 
-  Future<String> convertVideoFormats(String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
+  Future<String> convertVideoFormats(
+      String fileUrl, bool toLowResolution, bool applyTopBottomCorrection) {
     throw UnimplementedError('convertVideoFormats() has not been implemented.');
   }
 
@@ -147,7 +311,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
       String password,
       int connectionPriority,
       Proxy? proxy) {
-    throw UnimplementedError('setAccessPointDynamically() has not been implemented.');
+    throw UnimplementedError(
+        'setAccessPointDynamically() has not been implemented.');
   }
 
   Future<void> setAccessPointStatically(
@@ -160,7 +325,8 @@ abstract class ThetaClientFlutterPlatform extends PlatformInterface {
       String subnetMask,
       String defaultGateway,
       Proxy? proxy) {
-    throw UnimplementedError('setAccessPointStatically() has not been implemented.');
+    throw UnimplementedError(
+        'setAccessPointStatically() has not been implemented.');
   }
 
   Future<void> deleteAccessPoint(String ssid) {
