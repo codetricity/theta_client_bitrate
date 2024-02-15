@@ -177,6 +177,32 @@ class _XScreenState extends State<XScreen> {
                       ),
                     ),
                   ],
+                ),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        final body = {
+                          'name': 'camera.takePicture',
+                        };
+                        final cameraResponse = await http.post(
+                            Uri.parse(
+                                'http://192.168.1.1/osc/commands/execute'),
+                            body: jsonEncode(body),
+                            headers: {
+                              'Content-Type': 'application/json;charset=utf-8'
+                            });
+                        final bodyMap = jsonDecode(cameraResponse.body);
+                        setState(() {
+                          response = bodyMap.toString();
+                        });
+                      },
+                      child: const Text(
+                        'take picture',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),
