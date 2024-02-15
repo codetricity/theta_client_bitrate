@@ -27,9 +27,35 @@ class _XScreenState extends State<XScreen> {
             flex: 2,
             child: Column(
               children: [
-                const Text(
-                  'Camera Must be in Image Mode',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Camera Must be in',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          final options = Options();
+                          options.captureMode = CaptureModeEnum.image;
+                          await _thetaClientFlutter.setOptions(options);
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          final responseOptions = await _thetaClientFlutter
+                              .getOptions([OptionNameEnum.captureMode]);
+
+                          setState(() {
+                            response =
+                                'current mode: ${responseOptions.captureMode.toString()}';
+                          });
+                        },
+                        child: const Text(
+                          'image mode',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        )),
+                  ],
                 ),
                 Row(
                   children: [
@@ -214,12 +240,14 @@ class _XScreenState extends State<XScreen> {
                   color: Colors.black,
                 ),
                 const SizedBox(height: 30),
-                const Text(
-                  'Camera Must be in Video Mode',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Text(
+                      'Camera Must be in',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                     TextButton(
                         onPressed: () async {
                           final options = Options();
@@ -231,13 +259,19 @@ class _XScreenState extends State<XScreen> {
                               .getOptions([OptionNameEnum.captureMode]);
 
                           setState(() {
-                            response = responseOptions.captureMode.toString();
+                            response =
+                                'current mode: ${responseOptions.captureMode.toString()}';
                           });
                         },
                         child: const Text(
                           'video mode',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         )),
+                  ],
+                ),
+                Row(
+                  children: [
                     TextButton(
                       onPressed: () async {
                         final body = {
