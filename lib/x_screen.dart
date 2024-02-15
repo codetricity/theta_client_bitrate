@@ -222,22 +222,16 @@ class _XScreenState extends State<XScreen> {
                   children: [
                     TextButton(
                         onPressed: () async {
-                          final body = {
-                            'name': 'camera.setOptions',
-                            'parameters': {
-                              'options': {'captureMode': "video"}
-                            }
-                          };
-                          final cameraResponse = await http.post(
-                              Uri.parse(
-                                  'http://192.168.1.1/osc/commands/execute'),
-                              body: jsonEncode(body),
-                              headers: {
-                                'Content-Type': 'application/json;charset=utf-8'
-                              });
-                          final bodyMap = jsonDecode(cameraResponse.body);
+                          final options = Options();
+                          options.captureMode = CaptureModeEnum.video;
+                          await _thetaClientFlutter.setOptions(options);
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          final responseOptions = await _thetaClientFlutter
+                              .getOptions([OptionNameEnum.captureMode]);
+
                           setState(() {
-                            response = bodyMap.toString();
+                            response = responseOptions.captureMode.toString();
                           });
                         },
                         child: const Text(
