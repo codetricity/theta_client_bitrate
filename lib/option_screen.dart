@@ -127,6 +127,7 @@ class _OptionScreenState extends State<OptionScreen> {
                             });
                         final bodyMap = jsonDecode(cameraResponse.body);
                         final options = bodyMap['results']['options'];
+
                         setState(() {
                           response = 'bitrate: ${options['_bitrate']}';
                         });
@@ -144,6 +145,7 @@ class _OptionScreenState extends State<OptionScreen> {
                             'options': {'_bitrate': '1048576'}
                           }
                         };
+
                         final cameraResponse = await http.post(
                             Uri.parse(
                                 'http://192.168.1.1/osc/commands/execute'),
@@ -152,8 +154,11 @@ class _OptionScreenState extends State<OptionScreen> {
                               'Content-Type': 'application/json;charset=utf-8'
                             });
                         final bodyMap = jsonDecode(cameraResponse.body);
+                        final responseOptions = await _thetaClientFlutter
+                            .getOptions([OptionNameEnum.bitrate]);
                         setState(() {
-                          response = bodyMap.toString();
+                          response = 'request status: $bodyMap\n'
+                              'bitrate: ${responseOptions.bitrate}';
                         });
                       },
                       child: const Text(
@@ -177,8 +182,11 @@ class _OptionScreenState extends State<OptionScreen> {
                               'Content-Type': 'application/json;charset=utf-8'
                             });
                         final bodyMap = jsonDecode(cameraResponse.body);
+                        final responseOptions = await _thetaClientFlutter
+                            .getOptions([OptionNameEnum.bitrate]);
                         setState(() {
-                          response = bodyMap.toString();
+                          response = 'request status: $bodyMap\n'
+                              'bitrate: ${responseOptions.bitrate}';
                         });
                       },
                       child: const Text(

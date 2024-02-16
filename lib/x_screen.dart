@@ -129,32 +129,24 @@ class _XScreenState extends State<XScreen> {
                   children: [
                     TextButton(
                       onPressed: () async {
-                        final body = {
-                          'name': 'camera.setOptions',
-                          'parameters': {
-                            'options': {
-                              'fileFormat': {
-                                "type": "jpeg",
-                                "width": 11008,
-                                "height": 5504
-                              }
-                            }
-                          }
-                        };
-                        final cameraResponse = await http.post(
-                            Uri.parse(
-                                'http://192.168.1.1/osc/commands/execute'),
-                            body: jsonEncode(body),
-                            headers: {
-                              'Content-Type': 'application/json;charset=utf-8'
-                            });
-                        final bodyMap = jsonDecode(cameraResponse.body);
+                        final options = Options();
+                        options.fileFormat = FileFormatEnum.image_11K;
+                        final responseOptions =
+                            await _thetaClientFlutter.getOptions([
+                          OptionNameEnum.bitrate,
+                          OptionNameEnum.fileFormat,
+                          OptionNameEnum.imageStitching,
+                        ]);
+
                         setState(() {
-                          response = bodyMap.toString();
+                          response =
+                              'file format: ${responseOptions.fileFormat}\n'
+                              'image stitching: ${responseOptions.imageStitching}\n'
+                              'image bitrate: ${responseOptions.bitrate}';
                         });
                       },
                       child: const Text(
-                        '11K equirect',
+                        '11K',
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
