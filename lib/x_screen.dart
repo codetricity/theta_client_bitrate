@@ -27,9 +27,35 @@ class _XScreenState extends State<XScreen> {
             flex: 2,
             child: Column(
               children: [
-                const Text(
-                  'Camera Must be in Image Mode',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Camera Must be in',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          final options = Options();
+                          options.captureMode = CaptureModeEnum.image;
+                          await _thetaClientFlutter.setOptions(options);
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          final responseOptions = await _thetaClientFlutter
+                              .getOptions([OptionNameEnum.captureMode]);
+
+                          setState(() {
+                            response =
+                                'current mode: ${responseOptions.captureMode.toString()}';
+                          });
+                        },
+                        child: const Text(
+                          'image mode',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        )),
+                  ],
                 ),
                 Row(
                   children: [
@@ -103,37 +129,32 @@ class _XScreenState extends State<XScreen> {
                   children: [
                     TextButton(
                       onPressed: () async {
-                        final body = {
-                          'name': 'camera.setOptions',
-                          'parameters': {
-                            'options': {
-                              'fileFormat': {
-                                "type": "jpeg",
-                                "width": 11008,
-                                "height": 5504
-                              }
-                            }
-                          }
-                        };
-                        final cameraResponse = await http.post(
-                            Uri.parse(
-                                'http://192.168.1.1/osc/commands/execute'),
-                            body: jsonEncode(body),
-                            headers: {
-                              'Content-Type': 'application/json;charset=utf-8'
-                            });
-                        final bodyMap = jsonDecode(cameraResponse.body);
+                        final options = Options();
+                        options.fileFormat = FileFormatEnum.image_11K;
+                        final responseOptions =
+                            await _thetaClientFlutter.getOptions([
+                          OptionNameEnum.bitrate,
+                          OptionNameEnum.fileFormat,
+                          OptionNameEnum.imageStitching,
+                        ]);
+
                         setState(() {
-                          response = bodyMap.toString();
+                          response =
+                              'file format: ${responseOptions.fileFormat}\n'
+                              'image stitching: ${responseOptions.imageStitching}\n'
+                              'image bitrate: ${responseOptions.bitrate}';
                         });
                       },
                       child: const Text(
-                        '11K equirect',
+                        '11K',
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
                     TextButton(
                       onPressed: () async {
+                        // theta-client options not working
+                        // final options = Options();
+                        // options.imageStitching = ImageStitchingEnum.none;
                         final body = {
                           'name': 'camera.setOptions',
                           'parameters': {
@@ -159,6 +180,9 @@ class _XScreenState extends State<XScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
+                        // theta-client options not working
+                        // final options = Options();
+                        // options.imageStitching = ImageStitchingEnum.auto;
                         final body = {
                           'name': 'camera.setOptions',
                           'parameters': {
@@ -214,36 +238,38 @@ class _XScreenState extends State<XScreen> {
                   color: Colors.black,
                 ),
                 const SizedBox(height: 30),
-                const Text(
-                  'Camera Must be in Video Mode',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Text(
+                      'Camera Must be in',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                     TextButton(
                         onPressed: () async {
-                          final body = {
-                            'name': 'camera.setOptions',
-                            'parameters': {
-                              'options': {'captureMode': "video"}
-                            }
-                          };
-                          final cameraResponse = await http.post(
-                              Uri.parse(
-                                  'http://192.168.1.1/osc/commands/execute'),
-                              body: jsonEncode(body),
-                              headers: {
-                                'Content-Type': 'application/json;charset=utf-8'
-                              });
-                          final bodyMap = jsonDecode(cameraResponse.body);
+                          final options = Options();
+                          options.captureMode = CaptureModeEnum.video;
+                          await _thetaClientFlutter.setOptions(options);
+                          await Future.delayed(
+                              const Duration(milliseconds: 500));
+                          final responseOptions = await _thetaClientFlutter
+                              .getOptions([OptionNameEnum.captureMode]);
+
                           setState(() {
-                            response = bodyMap.toString();
+                            response =
+                                'current mode: ${responseOptions.captureMode.toString()}';
                           });
                         },
                         child: const Text(
                           'video mode',
-                          style: TextStyle(fontSize: 18),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         )),
+                  ],
+                ),
+                Row(
+                  children: [
                     TextButton(
                       onPressed: () async {
                         final body = {

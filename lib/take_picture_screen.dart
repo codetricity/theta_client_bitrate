@@ -1,11 +1,12 @@
-import 'package:theta_bitrate/message_box.dart';
-import 'package:theta_bitrate/photo_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
+import 'message_box.dart';
+import 'photo_screen.dart';
+
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({Key? key}) : super(key: key);
+  const TakePictureScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -68,7 +69,8 @@ class _TakePictureScreen extends State<TakePictureScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         appBar: AppBar(title: const Text('Take Picture')),
         body: Stack(
@@ -112,7 +114,9 @@ class _TakePictureScreen extends State<TakePictureScreen>
           ],
         ),
       ),
-      onWillPop: () => backButtonPress(context),
+      onPopInvoked: (didPop) async {
+        backButtonPress(context);
+      },
     );
   }
 
@@ -190,13 +194,20 @@ class _TakePictureScreen extends State<TakePictureScreen>
       });
       debugPrint('take picture: $fileUrl');
       if (!mounted) return;
-      Navigator.of(context)
-          .push(MaterialPageRoute(
-              builder: (_) => PhotoScreen(
-                    name: 'Take Picture',
-                    fileUrl: fileUrl,
-                  )))
-          .then((value) => startLivePreview());
+      if (fileUrl != null) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => PhotoScreen(
+                      name: 'Take Picture',
+                      fileUrl: fileUrl,
+                    )))
+            .then((value) => startLivePreview());
+      } else {
+        setState(() {
+          shooting = true;
+        });
+        debugPrint('takePicture canceled.');
+      }
     }, (exception) {
       setState(() {
         shooting = false;

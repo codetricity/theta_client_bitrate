@@ -1,12 +1,12 @@
-import 'package:theta_bitrate/video_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:theta_client_flutter/theta_client_flutter.dart';
 
 import 'message_box.dart';
+import 'video_screen.dart';
 
 class CaptureVideoScreen extends StatefulWidget {
-  const CaptureVideoScreen({Key? key}) : super(key: key);
+  const CaptureVideoScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -70,7 +70,8 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         appBar: AppBar(title: const Text('Capture Video')),
         body: Stack(
@@ -114,7 +115,9 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
           ],
         ),
       ),
-      onWillPop: () => backButtonPress(context),
+      onPopInvoked: (didPop) async {
+        backButtonPress(context);
+      },
     );
   }
 
@@ -175,6 +178,9 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
   }
 
   void startVideoCapture() {
+    if (videoCapture == null) {
+      return;
+    }
     if (shooting) {
       debugPrint('already shooting');
       return;
@@ -186,27 +192,32 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
     // Stops while shooting is in progress
     stopLivePreview();
 
-    videoCapturing = videoCapture!.startCapture((fileUrl) {
+    videoCapturing = videoCapture?.startCapture((fileUrl) {
       setState(() {
         shooting = false;
       });
       debugPrint('capture video: $fileUrl');
       if (!mounted) return;
 
-      final uri = Uri.parse(fileUrl);
-      Navigator.of(context)
-          .push(MaterialPageRoute(
-              builder: (_) => VideoScreen(
-                    name: uri.pathSegments.last,
-                    fileUrl: fileUrl,
-                  )))
-          .then((value) => startLivePreview());
+      if (fileUrl != null) {
+        final uri = Uri.parse(fileUrl);
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (_) => VideoScreen(
+                      name: uri.pathSegments.last,
+                      fileUrl: fileUrl,
+                    )))
+            .then((value) => startLivePreview());
+      }
     }, (exception) {
       setState(() {
         shooting = false;
       });
       startLivePreview();
       debugPrint(exception.toString());
+    }, onStopFailed: (exception) {
+      debugPrint(exception.toString());
+      MessageBox.show(context, 'Error. stopCapture.\n$exception');
     });
   }
 
@@ -215,6 +226,7 @@ class _CaptureVideoScreen extends State<CaptureVideoScreen>
       debugPrint('Not start capture.');
       return;
     }
+    debugPrint("stopVideoCapture");
     videoCapturing!.stopCapture();
   }
 }

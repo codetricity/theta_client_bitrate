@@ -11,18 +11,42 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       return '42';
     });
     expect(await platform.getPlatformVersion(), '42');
+  });
+
+  test('getThetaModel', () async {
+    const thetaModel = ThetaModel.thetaZ1;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      return thetaModel.rawValue;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, thetaModel);
+  });
+
+  test('getThetaModel null', () async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      return null;
+    });
+
+    var model = await platform.getThetaModel();
+    expect(model, null);
   });
 
   test('getThetaInfo', () async {
@@ -36,12 +60,19 @@ void main() {
     const hasGps = true;
     const hasGyro = true;
     const uptime = 142;
-    const api = ['/osc/info', '/osc/state', '/osc/checkForUpdates',
-      '/osc/commands/execute','/osc/commands/status'];
+    const api = [
+      '/osc/info',
+      '/osc/state',
+      '/osc/checkForUpdates',
+      '/osc/commands/execute',
+      '/osc/commands/status'
+    ];
     var endpoints = <String, int>{'httpPort': 80, 'httpUpdatesPort': 80};
     const apiLevel = [2];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      final Map info = <String, dynamic> {
+    const thetaModel = ThetaModel.thetaZ1;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      final Map info = <String, dynamic>{
         'manufacturer': manufacturer,
         'model': model,
         'serialNumber': serialNumber,
@@ -55,6 +86,7 @@ void main() {
         'api': api,
         'endpoints': endpoints,
         'apiLevel': apiLevel,
+        'thetaModel': thetaModel.rawValue,
       };
       return info;
     });
@@ -74,6 +106,7 @@ void main() {
     expect(thetaInfo.endpoints.httpPort, 80);
     expect(thetaInfo.endpoints.httpUpdatesPort, 80);
     expect(thetaInfo.apiLevel, apiLevel);
+    expect(thetaInfo.thetaModel, thetaModel);
   });
 
   test('getThetaState', () async {
@@ -95,10 +128,14 @@ void main() {
     const isMySettingChanged = true;
     const currentMicrophone = MicrophoneOptionEnum.auto;
     const isSdCard = true;
-    const cameraError = [CameraErrorEnum.batteryChargeFail, CameraErrorEnum.batteryHighTemperature];
+    const cameraError = [
+      CameraErrorEnum.batteryChargeFail,
+      CameraErrorEnum.batteryHighTemperature
+    ];
     const isBatteryInsert = false;
 
-    List<String> convertCameraErrorParam(List<CameraErrorEnum> cameraErrorList) {
+    List<String> convertCameraErrorParam(
+        List<CameraErrorEnum> cameraErrorList) {
       var stringList = List<String>.empty(growable: true);
       for (CameraErrorEnum element in cameraErrorList) {
         stringList.add(element.rawValue);
@@ -106,8 +143,9 @@ void main() {
       return stringList;
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      final Map state = <String, dynamic> {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      final Map state = <String, dynamic>{
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
         'storageUri': storageUri,
@@ -142,7 +180,8 @@ void main() {
     expect(thetaState.recordedTime, recordedTime);
     expect(thetaState.recordableTime, recordableTime);
     expect(thetaState.capturedPictures, capturedPictures);
-    expect(thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
+    expect(
+        thetaState.compositeShootingElapsedTime, compositeShootingElapsedTime);
     expect(thetaState.latestFileUrl, latestFileUrl);
     expect(thetaState.chargingState, chargingState);
     expect(thetaState.apiVersion, apiVersion);
@@ -167,8 +206,9 @@ void main() {
     const apiVersion = 2;
     const isSdCard = true;
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      final Map state = <String, dynamic> {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      final Map state = <String, dynamic>{
         'fingerprint': fingerprint,
         'batteryLevel': batteryLevel,
         'captureStatus': captureStatus.rawValue,
@@ -207,33 +247,44 @@ void main() {
   });
 
   test('listFiles', () async {
-    const fileTypes = [FileTypeEnum.all, FileTypeEnum.image, FileTypeEnum.video];
+    const fileTypes = [
+      FileTypeEnum.all,
+      FileTypeEnum.image,
+      FileTypeEnum.video
+    ];
     const entryCount = 10;
     const startPosition = 0;
     const name = 'R0013336.JPG';
     const size = 100;
+    const dateTimeZone = '2022:11:15 14:00:15+09:00';
     const dateTime = '2022:11:15 14:00:15';
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
-    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
 
     int index = 0;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['fileType'], fileTypes[index].rawValue);
       expect(arguments['entryCount'], entryCount);
       expect(arguments['startPosition'], startPosition);
 
       final List fileList = List<dynamic>.empty(growable: true);
-      final Map info = <String, dynamic> {
+      final Map info = <String, dynamic>{
         'name': name,
         'size': size,
+        'dateTimeZone': dateTimeZone,
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
+        'codec': 'H264MP4AVC',
+        'projectionType': 'DUAL_FISHEYE',
       };
       fileList.add(info);
       fileList.add(info);
-      final Map thetaFiles = <String, dynamic> {
+      final Map thetaFiles = <String, dynamic>{
         'fileList': fileList,
         'totalEntries': 10,
       };
@@ -242,32 +293,44 @@ void main() {
 
     for (int i = 0; i < fileTypes.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(fileTypes[i], entryCount, startPosition, StorageEnum.current);
+      var thetaFiles = await platform.listFiles(
+          fileTypes[i], entryCount, startPosition, StorageEnum.current);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
       expect(fileInfo.size, size);
+      expect(fileInfo.dateTimeZone, dateTimeZone);
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
+      expect(fileInfo.codec, CodecEnum.h264mp4avc);
+      expect(fileInfo.projectionType, ProjectionTypeEnum.dualFisheye);
       expect(fileInfo.storageID, null);
       expect(thetaFiles.totalEntries, 10);
     }
   });
 
   test('listFiles StorageEnum', () async {
-    const storages = [StorageEnum.internal, StorageEnum.sd, StorageEnum.current];
+    const storages = [
+      StorageEnum.internal,
+      StorageEnum.sd,
+      StorageEnum.current
+    ];
     const entryCount = 10;
     const startPosition = 0;
     const name = 'R0013336.JPG';
     const size = 100;
+    const dateTimeZone = '2022:11:15 14:00:15+09:00';
     const dateTime = '2022:11:15 14:00:15';
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
-    const thumbnailUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
+    const fileUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
+    const thumbnailUrl =
+        'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG?type=thumb';
     const storageID = 'a0123456789';
 
     int index = 0;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['fileType'], FileTypeEnum.image.rawValue);
       expect(arguments['entryCount'], entryCount);
@@ -275,9 +338,10 @@ void main() {
       expect(arguments['storage'], storages[index].rawValue);
 
       final List fileList = List<dynamic>.empty(growable: true);
-      final Map info = <String, dynamic> {
+      final Map info = <String, dynamic>{
         'name': name,
         'size': size,
+        'dateTimeZone': dateTimeZone,
         'dateTime': dateTime,
         'fileUrl': fileUrl,
         'thumbnailUrl': thumbnailUrl,
@@ -285,7 +349,7 @@ void main() {
       };
       fileList.add(info);
       fileList.add(info);
-      final Map thetaFiles = <String, dynamic> {
+      final Map thetaFiles = <String, dynamic>{
         'fileList': fileList,
         'totalEntries': 10,
       };
@@ -294,11 +358,13 @@ void main() {
 
     for (int i = 0; i < storages.length; i++) {
       index = i;
-      var thetaFiles = await platform.listFiles(FileTypeEnum.image, entryCount, startPosition, storages[index]);
+      var thetaFiles = await platform.listFiles(
+          FileTypeEnum.image, entryCount, startPosition, storages[index]);
       expect(thetaFiles.fileList.length, 2);
       var fileInfo = thetaFiles.fileList[0];
       expect(fileInfo.name, name);
       expect(fileInfo.size, size);
+      expect(fileInfo.dateTimeZone, dateTimeZone);
       expect(fileInfo.dateTime, dateTime);
       expect(fileInfo.fileUrl, fileUrl);
       expect(fileInfo.thumbnailUrl, thumbnailUrl);
@@ -307,137 +373,280 @@ void main() {
     }
   });
 
-  test('buildPhotoCapture', () async {
-    Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
-    };
-    List<List<dynamic>> data = [
-      ['Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
-      ['ColorTemperature', 2, 2],
-      ['ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
-      ['ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
-      ['ExposureProgram', ExposureProgramEnum.aperturePriority, 'APERTURE_PRIORITY'],
-      ['GpsInfo', GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'), gpsInfoMap],
-      ['GpsTagRecording', GpsTagRecordingEnum.on, 'ON'],
-      ['Iso', IsoEnum.iso50, 'ISO_50'],
-      ['IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
-      ['WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
-      ['Filter', FilterEnum.hdr, 'HDR'],
-      ['PhotoFileFormat', PhotoFileFormatEnum.rawP_6_7K, 'RAW_P_6_7K'],
-    ];
-
-    Map<String, dynamic> options = {};
-    for (int i = 0; i < data.length; i++) {
-      options[data[i][0]] = data[i][1];
-    }
-
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
-      for (int i = 0; i < data.length; i++) {
-        expect(arguments[data[i][0]], data[i][2], reason: data[i][0]);
-      }
-
-      return Future.value();
-    });
-    await platform.buildPhotoCapture(options);
-  });
-
-  test('takePicture', () async {
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.JPG';
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return fileUrl;
-    });
-    expect(await platform.takePicture(), fileUrl);
-  });
-
-  test('buildVideoCapture', () async {
-    Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
-    };
-    List<List<dynamic>> data = [
-      ['Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
-      ['ColorTemperature', 2, 2],
-      ['ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
-      ['ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
-      ['ExposureProgram', ExposureProgramEnum.aperturePriority, 'APERTURE_PRIORITY'],
-      ['GpsInfo', GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'), gpsInfoMap],
-      ['GpsTagRecording', GpsTagRecordingEnum.on, 'ON'],
-      ['Iso', IsoEnum.iso50, 'ISO_50'],
-      ['IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
-      ['WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
-      ['MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
-      ['VideoFileFormat', VideoFileFormatEnum.videoFullHD, 'VIDEO_FULL_HD'],
-    ];
-
-    Map<String, dynamic> options = {};
-    for (int i = 0; i < data.length; i++) {
-      options[data[i][0]] = data[i][1];
-    }
-
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      var arguments = methodCall.arguments as Map<dynamic, dynamic>;
-      for (int i = 0; i < data.length; i++) {
-        expect(arguments[data[i][0]], data[i][2], reason: data[i][0]);
-      }
-
-      return Future.value();
-    });
-    await platform.buildVideoCapture(options);
-  });
-
-  test('startVideoCapture', () async {
-    const fileUrl = 'http://192.168.1.1/files/150100524436344d4201375fda9dc400/100RICOH/R0013336.MP4';
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return fileUrl;
-    });
-    expect(await platform.startVideoCapture(), fileUrl);
-  });
-
   test('getOptions', () async {
+    List<Map<String, dynamic>> bracketSetting = [
+      {
+        'aperture': 'APERTURE_2_1',
+        'colorTemperature': 5000,
+        'exposureCompensation': 'ZERO',
+        'exposureProgram': 'MANUAL',
+        'iso': 'ISO_400',
+        'shutterSpeed': 'SHUTTER_SPEED_ONE_OVER_250',
+        'whiteBalance': 'AUTO'
+      }
+    ];
     Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
-    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> proxyMap = {
+      'use': false,
+      'url': '',
+      'port': 8081,
+      'userid': '',
+      'password': ''
+    };
     Map<String, dynamic> timeShiftMap = {
-      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+      'isFrontFirst': true,
+      'firstInterval': TimeShiftIntervalEnum.interval_5.toString(),
+      'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
+    Map<String, dynamic> topBottomCorrectionRotationMap = {
+      'pitch': 1.0,
+      'roll': 2.0,
+      'yaw': 3.0
     };
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
-      [OptionNameEnum.cameraControlSource, 'CameraControlSource', CameraControlSourceEnum.camera, 'CAMERA'],
-      [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
-      [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [
+        OptionNameEnum.aiAutoThumbnail,
+        'AiAutoThumbnail',
+        AiAutoThumbnailEnum.off,
+        'OFF'
+      ],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.aperture_2_0,
+        'APERTURE_2_0'
+      ],
+      [
+        OptionNameEnum.autoBracket,
+        'AutoBracket',
+        [
+          BracketSetting(
+              aperture: ApertureEnum.aperture_2_1,
+              colorTemperature: 5000,
+              exposureCompensation: ExposureCompensationEnum.zero,
+              exposureProgram: ExposureProgramEnum.manual,
+              iso: IsoEnum.iso400,
+              shutterSpeed: ShutterSpeedEnum.shutterSpeedOneOver_250,
+              whiteBalance: WhiteBalanceEnum.auto)
+        ],
+        bracketSetting
+      ],
+      [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
+      [
+        OptionNameEnum.bluetoothPower,
+        'BluetoothPower',
+        BluetoothPowerEnum.off,
+        'OFF'
+      ],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
+      [
+        OptionNameEnum.cameraControlSource,
+        'CameraControlSource',
+        CameraControlSourceEnum.camera,
+        'CAMERA'
+      ],
+      [
+        OptionNameEnum.cameraMode,
+        'CameraMode',
+        CameraModeEnum.capture,
+        'CAPTURE'
+      ],
+      [
+        OptionNameEnum.captureMode,
+        'CaptureMode',
+        CaptureModeEnum.image,
+        'IMAGE'
+      ],
+      [OptionNameEnum.captureInterval, 'CaptureInterval', 6, 6],
+      [OptionNameEnum.captureNumber, 'CaptureNumber', 0, 0],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
-      [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.aperturePriority, 'APERTURE_PRIORITY'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [
+        OptionNameEnum.compositeShootingOutputInterval,
+        'CompositeShootingOutputInterval',
+        60,
+        60
+      ],
+      [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
+      [
+        OptionNameEnum.continuousNumber,
+        'ContinuousNumber',
+        ContinuousNumberEnum.max11,
+        'MAX_11'
+      ],
+      [
+        OptionNameEnum.dateTimeZone,
+        'DateTimeZone',
+        '2022:01:01 00:01:00+09:00',
+        '2022:01:01 00:01:00+09:00'
+      ],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.m0_3,
+        'M0_3'
+      ],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.aperturePriority,
+        'APERTURE_PRIORITY'
+      ],
+      [OptionNameEnum.faceDetect, 'FaceDetect', FaceDetectEnum.off, 'OFF'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_2K,
+        'IMAGE_2K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
-      [OptionNameEnum.gpsInfo, 'GpsInfo', GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'), gpsInfoMap],
+      [
+        OptionNameEnum.function,
+        'Function',
+        ShootingFunctionEnum.normal,
+        'NORMAL'
+      ],
+      [OptionNameEnum.gain, 'Gain', GainEnum.normal, 'NORMAL'],
+      [
+        OptionNameEnum.gpsInfo,
+        'GpsInfo',
+        GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
+        gpsInfoMap
+      ],
+      [
+        OptionNameEnum.imageStitching,
+        'ImageStitching',
+        ImageStitchingEnum.auto,
+        'AUTO'
+      ],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso200,
+        'ISO_200'
+      ],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
-      [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
-      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
-      [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_10m, 'OFF_DELAY_10M'],
+      [
+        OptionNameEnum.latestEnabledExposureDelayTime,
+        'LatestEnabledExposureDelayTime',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
+      [
+        OptionNameEnum.maxRecordableTime,
+        'MaxRecordableTime',
+        MaxRecordableTimeEnum.time_1500,
+        'RECORDABLE_TIME_1500'
+      ],
+      [
+        OptionNameEnum.networkType,
+        'NetworkType',
+        NetworkTypeEnum.client,
+        'CLIENT'
+      ],
+      [
+        OptionNameEnum.offDelay,
+        'OffDelay',
+        OffDelayEnum.offDelay_10m,
+        'OFF_DELAY_10M'
+      ],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
-      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
+      [
+        OptionNameEnum.previewFormat,
+        'PreviewFormat',
+        PreviewFormatEnum.w1024_h512_f30,
+        'W1024_H512_F30'
+      ],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
-      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_10, 'SHUTTER_SPEED_ONE_OVER_10'],
+      [
+        OptionNameEnum.shootingMethod,
+        'ShootingMethod',
+        ShootingMethodEnum.normal,
+        'NORMAL'
+      ],
+      [
+        OptionNameEnum.shutterSpeed,
+        'ShutterSpeed',
+        ShutterSpeedEnum.shutterSpeedOneOver_10,
+        'SHUTTER_SPEED_ONE_OVER_10'
+      ],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
-      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
+      [
+        OptionNameEnum.sleepDelay,
+        'SleepDelay',
+        SleepDelayEnum.sleepDelay_10m,
+        'SLEEP_DELAY_10M'
+      ],
+      [
+        OptionNameEnum.timeShift,
+        'TimeShift',
+        TimeShift(
+            isFrontFirst: true,
+            firstInterval: TimeShiftIntervalEnum.interval_5,
+            secondInterval: TimeShiftIntervalEnum.interval_10),
+        timeShiftMap
+      ],
+      [
+        OptionNameEnum.topBottomCorrection,
+        'TopBottomCorrection',
+        TopBottomCorrectionOptionEnum.apply,
+        'APPLY'
+      ],
+      [
+        OptionNameEnum.topBottomCorrectionRotation,
+        'TopBottomCorrectionRotation',
+        TopBottomCorrectionRotation(1.0, 2.0, 3.0),
+        topBottomCorrectionRotationMap
+      ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
-      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4, 'GHZ_2_4'],
+      [
+        OptionNameEnum.videoStitching,
+        'VideoStitching',
+        VideoStitchingEnum.none,
+        'NONE'
+      ],
+      [
+        OptionNameEnum.visibilityReduction,
+        'VisibilityReduction',
+        VisibilityReductionEnum.off,
+        'OFF'
+      ],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.bulbFluorescent,
+        'BULB_FLUORESCENT'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
+      [
+        OptionNameEnum.wlanFrequency,
+        'WlanFrequency',
+        WlanFrequencyEnum.ghz_2_4,
+        'GHZ_2_4'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -448,7 +657,8 @@ void main() {
       optionNames.add(data[i][0]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as List<dynamic>;
       for (int i = 0; i < data.length; i++) {
         expect(arguments[i], data[i][1], reason: data[i][1]);
@@ -458,59 +668,271 @@ void main() {
     Options options = await platform.getOptions(optionNames);
 
     expect(options, isNotNull);
-    expect(options.aperture, data[0][2]);
-    expect(options.cameraControlSource, data[1][2]);
-    expect(options.cameraMode, data[2][2]);
-    expect(options.captureMode, data[3][2]);
+    expect(options.aperture, data[1][2]);
+    expect(options.cameraControlSource, data[6][2]);
+    expect(options.cameraMode, data[7][2]);
+    expect(options.captureMode, data[8][2]);
     for (int i = 0; i < data.length; i++) {
       expect(options.getValue(data[i][0]), data[i][2], reason: data[i][1]);
     }
   });
 
   test('setOptions', () async {
+    List<Map<String, dynamic>> autoBracketMap = [
+      {
+        'aperture': 'APERTURE_2_1',
+        'colorTemperature': 5000,
+        'exposureCompensation': 'ZERO',
+        'exposureProgram': 'MANUAL',
+        'iso': 'ISO_400',
+        'shutterSpeed': 'SHUTTER_SPEED_ONE_OVER_250',
+        'whiteBalance': 'AUTO'
+      }
+    ];
     Map<String, dynamic> gpsInfoMap = {
-      'latitude': 1.0, 'longitude': 2.0, 'altitude': 3.0, 'dateTimeZone': '2022:01:01 00:01:00+09:00'
+      'latitude': 1.0,
+      'longitude': 2.0,
+      'altitude': 3.0,
+      'dateTimeZone': '2022:01:01 00:01:00+09:00'
     };
-    Map<String, dynamic> proxyMap = {'use': false, 'url': '', 'port': 8081, 'userid': '', 'password': ''};
+    Map<String, dynamic> proxyMap = {
+      'use': false,
+      'url': '',
+      'port': 8081,
+      'userid': '',
+      'password': ''
+    };
     Map<String, dynamic> timeShiftMap = {
-      'isFrontFirst': true, 'firstInterval': TimeShiftIntervalEnum.interval_5.toString(), 'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+      'isFrontFirst': true,
+      'firstInterval': TimeShiftIntervalEnum.interval_5.toString(),
+      'secondInterval': TimeShiftIntervalEnum.interval_10.toString()
+    };
+    Map<String, dynamic> topBottomCorrectionRotationMap = {
+      'pitch': 1.0,
+      'roll': 2.0,
+      'yaw': 3.0
     };
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.aperture_2_0, 'APERTURE_2_0'],
-      [OptionNameEnum.cameraMode, 'CameraMode', CameraModeEnum.capture, 'CAPTURE'],
-      [OptionNameEnum.captureMode, 'CaptureMode', CaptureModeEnum.image, 'IMAGE'],
+      [
+        OptionNameEnum.aiAutoThumbnail,
+        'AiAutoThumbnail',
+        AiAutoThumbnailEnum.on,
+        'ON'
+      ],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.aperture_2_0,
+        'APERTURE_2_0'
+      ],
+      [
+        OptionNameEnum.autoBracket,
+        'AutoBracket',
+        [
+          BracketSetting(
+              aperture: ApertureEnum.aperture_2_1,
+              colorTemperature: 5000,
+              exposureCompensation: ExposureCompensationEnum.zero,
+              exposureProgram: ExposureProgramEnum.manual,
+              iso: IsoEnum.iso400,
+              shutterSpeed: ShutterSpeedEnum.shutterSpeedOneOver_250,
+              whiteBalance: WhiteBalanceEnum.auto)
+        ],
+        autoBracketMap,
+      ],
+      [OptionNameEnum.bitrate, 'Bitrate', Bitrate.fine, 'FINE'],
+      [
+        OptionNameEnum.bluetoothPower,
+        'BluetoothPower',
+        BluetoothPowerEnum.on,
+        'ON'
+      ],
+      [OptionNameEnum.burstMode, 'BurstMode', BurstModeEnum.on, 'ON'],
+      [
+        OptionNameEnum.cameraMode,
+        'CameraMode',
+        CameraModeEnum.capture,
+        'CAPTURE'
+      ],
+      [
+        OptionNameEnum.captureMode,
+        'CaptureMode',
+        CaptureModeEnum.image,
+        'IMAGE'
+      ],
+      [OptionNameEnum.captureInterval, 'CaptureInterval', 4, 4],
+      [OptionNameEnum.captureNumber, 'CaptureNumber', 2, 2],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 2, 2],
-      [OptionNameEnum.dateTimeZone, 'DateTimeZone', '2022:01:01 00:01:00+09:00', '2022:01:01 00:01:00+09:00'],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.m0_3, 'M0_3'],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay1, 'DELAY_1'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.aperturePriority, 'APERTURE_PRIORITY'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [
+        OptionNameEnum.compositeShootingOutputInterval,
+        'CompositeShootingOutputInterval',
+        60,
+        60
+      ],
+      [OptionNameEnum.compositeShootingTime, 'CompositeShootingTime', 600, 600],
+      [
+        OptionNameEnum.dateTimeZone,
+        'DateTimeZone',
+        '2022:01:01 00:01:00+09:00',
+        '2022:01:01 00:01:00+09:00'
+      ],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.m0_3,
+        'M0_3'
+      ],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delay1,
+        'DELAY_1'
+      ],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.aperturePriority,
+        'APERTURE_PRIORITY'
+      ],
+      [OptionNameEnum.faceDetect, 'FaceDetect', FaceDetectEnum.on, 'ON'],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_2K,
+        'IMAGE_2K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
-      [OptionNameEnum.gpsInfo, 'GpsInfo', GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'), gpsInfoMap],
+      [
+        OptionNameEnum.function,
+        'Function',
+        ShootingFunctionEnum.selfTimer,
+        'SELF_TIMER'
+      ],
+      [OptionNameEnum.gain, 'Gain', GainEnum.megaVolume, 'MEGA_VOLUME'],
+      [
+        OptionNameEnum.gpsInfo,
+        'GpsInfo',
+        GpsInfo(1.0, 2.0, 3.0, '2022:01:01 00:01:00+09:00'),
+        gpsInfoMap
+      ],
+      [
+        OptionNameEnum.imageStitching,
+        'ImageStitching',
+        ImageStitchingEnum.auto,
+        'AUTO'
+      ],
       [OptionNameEnum.isGpsOn, 'IsGpsOn', true, true],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso50, 'ISO_50'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso200, 'ISO_200'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso200,
+        'ISO_200'
+      ],
       [OptionNameEnum.language, 'Language', LanguageEnum.de, 'DE'],
-      [OptionNameEnum.maxRecordableTime, 'MaxRecordableTime', MaxRecordableTimeEnum.time_1500, 'RECORDABLE_TIME_1500'],
-      [OptionNameEnum.networkType, 'NetworkType', NetworkTypeEnum.client, 'CLIENT'],
-      [OptionNameEnum.offDelay, 'OffDelay', OffDelayEnum.offDelay_15m, 'OFF_DELAY_15M'],
+      [
+        OptionNameEnum.maxRecordableTime,
+        'MaxRecordableTime',
+        MaxRecordableTimeEnum.time_1500,
+        'RECORDABLE_TIME_1500'
+      ],
+      [
+        OptionNameEnum.networkType,
+        'NetworkType',
+        NetworkTypeEnum.client,
+        'CLIENT'
+      ],
+      [
+        OptionNameEnum.offDelay,
+        'OffDelay',
+        OffDelayEnum.offDelay_15m,
+        'OFF_DELAY_15M'
+      ],
       [OptionNameEnum.password, 'Password', 'password', 'password'],
       [OptionNameEnum.powerSaving, 'PowerSaving', PowerSavingEnum.on, 'ON'],
-      [OptionNameEnum.previewFormat, 'PreviewFormat', PreviewFormatEnum.w1024_h512_f30, 'W1024_H512_F30'],
+      [OptionNameEnum.preset, 'Preset', PresetEnum.room, 'ROOM'],
+      [
+        OptionNameEnum.previewFormat,
+        'PreviewFormat',
+        PreviewFormatEnum.w1024_h512_f30,
+        'W1024_H512_F30'
+      ],
       [OptionNameEnum.proxy, 'Proxy', Proxy(false, '', 8081, '', ''), proxyMap],
       [OptionNameEnum.remainingPictures, 'RemainingPictures', 3, 3],
       [OptionNameEnum.remainingVideoSeconds, 'RemainingVideoSeconds', 4, 4],
       [OptionNameEnum.remainingSpace, 'RemainingSpace', 5, 5],
-      [OptionNameEnum.shootingMethod, 'ShootingMethod', ShootingMethodEnum.normal, 'NORMAL'],
-      [OptionNameEnum.shutterSpeed, 'ShutterSpeed', ShutterSpeedEnum.shutterSpeedOneOver_20, 'SHUTTER_SPEED_ONE_OVER_20'],
+      [
+        OptionNameEnum.shootingMethod,
+        'ShootingMethod',
+        ShootingMethodEnum.normal,
+        'NORMAL'
+      ],
+      [
+        OptionNameEnum.shutterSpeed,
+        'ShutterSpeed',
+        ShutterSpeedEnum.shutterSpeedOneOver_20,
+        'SHUTTER_SPEED_ONE_OVER_20'
+      ],
       [OptionNameEnum.shutterVolume, 'ShutterVolume', 7, 7],
-      [OptionNameEnum.sleepDelay, 'SleepDelay', SleepDelayEnum.sleepDelay_10m, 'SLEEP_DELAY_10M'],
-      [OptionNameEnum.timeShift, 'TimeShift', TimeShift(isFrontFirst: true, firstInterval: TimeShiftIntervalEnum.interval_5, secondInterval: TimeShiftIntervalEnum.interval_10), timeShiftMap],
+      [
+        OptionNameEnum.sleepDelay,
+        'SleepDelay',
+        SleepDelayEnum.sleepDelay_10m,
+        'SLEEP_DELAY_10M'
+      ],
+      [
+        OptionNameEnum.timeShift,
+        'TimeShift',
+        TimeShift(
+            isFrontFirst: true,
+            firstInterval: TimeShiftIntervalEnum.interval_5,
+            secondInterval: TimeShiftIntervalEnum.interval_10),
+        timeShiftMap
+      ],
+      [
+        OptionNameEnum.topBottomCorrection,
+        'TopBottomCorrection',
+        TopBottomCorrectionOptionEnum.applyAuto,
+        'APPLY_AUTO'
+      ],
+      [
+        OptionNameEnum.topBottomCorrectionRotation,
+        'TopBottomCorrectionRotation',
+        TopBottomCorrectionRotation(1.0, 2.0, 3.0),
+        topBottomCorrectionRotationMap
+      ],
       [OptionNameEnum.totalSpace, 'TotalSpace', 6, 6],
       [OptionNameEnum.username, 'Username', 'username', 'username'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.bulbFluorescent, 'BULB_FLUORESCENT'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.on, 'ON'],
-      [OptionNameEnum.wlanFrequency, 'WlanFrequency', WlanFrequencyEnum.ghz_2_4,'GHZ_2_4'],
+      [
+        OptionNameEnum.videoStitching,
+        'VideoStitching',
+        VideoStitchingEnum.none,
+        'NONE'
+      ],
+      [
+        OptionNameEnum.visibilityReduction,
+        'VisibilityReduction',
+        VisibilityReductionEnum.off,
+        'OFF'
+      ],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.bulbFluorescent,
+        'BULB_FLUORESCENT'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.on,
+        'ON'
+      ],
+      [
+        OptionNameEnum.wlanFrequency,
+        'WlanFrequency',
+        WlanFrequencyEnum.ghz_2_4,
+        'GHZ_2_4'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -525,7 +947,8 @@ void main() {
       options.setValue(data[i][0], data[i][2]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       for (int i = 0; i < data.length; i++) {
         expect(arguments[data[i][1]], data[i][3], reason: data[i][1]);
@@ -540,7 +963,8 @@ void main() {
   test('initialize endpoint', () async {
     const endpoint = 'http://dummy/';
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['config'], isNull);
@@ -559,7 +983,8 @@ void main() {
     config.sleepDelay = SleepDelayEnum.sleepDelay_10m;
     config.shutterVolume = 3;
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['timeout'], isNull);
@@ -584,7 +1009,8 @@ void main() {
     const password = "1234567";
     config.clientMode = DigestAuth(username, password);
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['timeout'], isNull);
@@ -610,7 +1036,8 @@ void main() {
     const username = "THETAXX1234567";
     config.clientMode = DigestAuth(username);
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['timeout'], isNull);
@@ -637,7 +1064,8 @@ void main() {
     timeout.requestTimeout = 20;
     timeout.socketTimeout = 30;
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['endpoint'], endpoint);
       expect(arguments['config'], isNull);
@@ -659,7 +1087,8 @@ void main() {
       'image3.jpg',
     ];
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteFiles');
       var arguments = methodCall.arguments as List<dynamic>;
       expect(arguments[0], files[0]);
@@ -672,7 +1101,8 @@ void main() {
   });
 
   test('deleteAllFiles', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAllFiles');
       return Future.value();
     });
@@ -680,7 +1110,8 @@ void main() {
   });
 
   test('deleteAllImageFiles', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAllImageFiles');
       return Future.value();
     });
@@ -688,7 +1119,8 @@ void main() {
   });
 
   test('deleteAllVideoFiles', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAllVideoFiles');
       return Future.value();
     });
@@ -721,7 +1153,8 @@ void main() {
       }
     };
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'getMetadata');
       return Future.value(metadataMap);
     });
@@ -739,7 +1172,8 @@ void main() {
   });
 
   test('reset', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'reset');
       return Future.value();
     });
@@ -747,7 +1181,8 @@ void main() {
   });
 
   test('stopSelfTimer', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'stopSelfTimer');
       return Future.value();
     });
@@ -759,7 +1194,8 @@ void main() {
     String result = 'http://dummy_result.MP4';
     bool toLowResolution = true;
     bool applyTopBottomCorrection = true;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'convertVideoFormats');
 
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
@@ -768,11 +1204,15 @@ void main() {
       expect(arguments['applyTopBottomCorrection'], applyTopBottomCorrection);
       return Future.value(result);
     });
-    expect(await platform.convertVideoFormats(fileUrl, toLowResolution, applyTopBottomCorrection), result);
+    expect(
+        await platform.convertVideoFormats(
+            fileUrl, toLowResolution, applyTopBottomCorrection),
+        result);
   });
 
   test('cancelVideoConvert', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'cancelVideoConvert');
       return Future.value();
     });
@@ -780,7 +1220,8 @@ void main() {
   });
 
   test('finishWlan', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'finishWlan');
       return Future.value();
     });
@@ -795,12 +1236,7 @@ void main() {
         'authMode': 'NONE',
         'connectionPriority': 1,
         'usingDhcp': true,
-        'proxy': {
-          'use': true,
-          'url': 'xxx',
-          'port': 8081,
-          'userid': 'abc'
-        },
+        'proxy': {'use': true, 'url': 'xxx', 'port': 8081, 'userid': 'abc'},
       },
       {
         'ssid': 'ssid_test2',
@@ -811,12 +1247,7 @@ void main() {
         'ipAddress': '192.168.1.2',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.100',
-        'proxy': {
-          'use': false,
-          'url': '',
-          'port': 0,
-          'userid': ''
-        },
+        'proxy': {'use': false, 'url': '', 'port': 0, 'userid': ''},
       },
       {
         'ssid': 'ssid_test3',
@@ -827,15 +1258,11 @@ void main() {
         'ipAddress': '192.168.1.3',
         'subnetMask': '255.255.255.0',
         'defaultGateway': '192.168.1.101',
-        'proxy': {
-          'use': true,
-          'url': 'xxx',
-          'port': 8081,
-          'userid': 'abc'
-        },
+        'proxy': {'use': true, 'url': 'xxx', 'port': 8081, 'userid': 'abc'},
       },
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'listAccessPoints');
       return Future.value(data);
     });
@@ -843,16 +1270,21 @@ void main() {
     for (int i = 0; i < resultList.length; i++) {
       expect(resultList[i].ssid, data[i]['ssid']);
       expect(resultList[i].ssidStealth, data[i]['ssidStealth']);
-      expect(resultList[i].authMode, AuthModeEnum.getValue(data[i]['authMode'] as String));
+      expect(resultList[i].authMode,
+          AuthModeEnum.getValue(data[i]['authMode'] as String));
       expect(resultList[i].connectionPriority, data[i]['connectionPriority']);
       expect(resultList[i].usingDhcp, data[i]['usingDhcp']);
       expect(resultList[i].ipAddress, data[i]['ipAddress']);
       expect(resultList[i].subnetMask, data[i]['subnetMask']);
       expect(resultList[i].defaultGateway, data[i]['defaultGateway']);
-      expect(resultList[i].proxy?.use, (data[i]['proxy'] as Map<String, dynamic>)['use']);
-      expect(resultList[i].proxy?.url, (data[i]['proxy'] as Map<String, dynamic>)['url']);
-      expect(resultList[i].proxy?.port, (data[i]['proxy'] as Map<String, dynamic>)['port']);
-      expect(resultList[i].proxy?.userid, (data[i]['proxy'] as Map<String, dynamic>)['userid']);
+      expect(resultList[i].proxy?.use,
+          (data[i]['proxy'] as Map<String, dynamic>)['use']);
+      expect(resultList[i].proxy?.url,
+          (data[i]['proxy'] as Map<String, dynamic>)['url']);
+      expect(resultList[i].proxy?.port,
+          (data[i]['proxy'] as Map<String, dynamic>)['port']);
+      expect(resultList[i].proxy?.userid,
+          (data[i]['proxy'] as Map<String, dynamic>)['userid']);
     }
   });
 
@@ -864,7 +1296,8 @@ void main() {
     const connectionPriority = 2;
     var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointDynamically');
 
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
@@ -880,7 +1313,8 @@ void main() {
       expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointDynamically(ssid, ssidStealth, authMode, password, connectionPriority, proxy);
+    await platform.setAccessPointDynamically(
+        ssid, ssidStealth, authMode, password, connectionPriority, proxy);
   });
 
   test('setAccessPointStatically', () async {
@@ -894,7 +1328,8 @@ void main() {
     const defaultGateway = '192.168.1.3';
     var proxy = Proxy(true, 'https://xxx', 8081, 'abc', 'pwpwpwp111');
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setAccessPointStatically');
 
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
@@ -913,12 +1348,22 @@ void main() {
       expect(arguments['proxy']['password'], proxy.password);
       return Future.value();
     });
-    await platform.setAccessPointStatically(ssid, ssidStealth, authMode, password, connectionPriority, ipAddress, subnetMask, defaultGateway, proxy);
+    await platform.setAccessPointStatically(
+        ssid,
+        ssidStealth,
+        authMode,
+        password,
+        connectionPriority,
+        ipAddress,
+        subnetMask,
+        defaultGateway,
+        proxy);
   });
 
   test('deleteAccessPoint', () async {
     const ssid = 'ssid_test';
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteAccessPoint');
       expect(methodCall.arguments, ssid);
       return Future.value();
@@ -928,17 +1373,57 @@ void main() {
 
   test('getMySetting', () async {
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.apertureAuto,
+        'APERTURE_AUTO'
+      ],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.zero,
+        'ZERO'
+      ],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delayOff,
+        'DELAY_OFF'
+      ],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.normalProgram,
+        'NORMAL_PROGRAM'
+      ],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_6_7K,
+        'IMAGE_6_7K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso6400,
+        'ISO_6400'
+      ],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.auto,
+        'AUTO'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -949,7 +1434,8 @@ void main() {
       optionNames.add(data[i][0]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
       return Future.value(optionMap);
@@ -966,17 +1452,57 @@ void main() {
 
   test('getMySettingFromOldModel', () async {
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.apertureAuto,
+        'APERTURE_AUTO'
+      ],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 5000, 5000],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.zero, 'ZERO'],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delayOff, 'DELAY_OFF'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.normalProgram, 'NORMAL_PROGRAM'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_6_7K, 'IMAGE_6_7K'],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.zero,
+        'ZERO'
+      ],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delayOff,
+        'DELAY_OFF'
+      ],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.normalProgram,
+        'NORMAL_PROGRAM'
+      ],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_6_7K,
+        'IMAGE_6_7K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.off, 'OFF'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.isoAuto, 'ISO_AUTO'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso6400, 'ISO_6400'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso6400,
+        'ISO_6400'
+      ],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.auto,
+        'AUTO'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -987,7 +1513,8 @@ void main() {
       optionNames.add(data[i][0]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments['optionNames'] as List<dynamic>;
       for (int i = 0; i < data.length; i++) {
         expect(arguments[i], data[i][1], reason: data[i][1]);
@@ -1006,17 +1533,57 @@ void main() {
 
   test('setMySetting', () async {
     List<List<dynamic>> data = [
-      [OptionNameEnum.aperture, 'Aperture', ApertureEnum.apertureAuto, 'APERTURE_AUTO'],
+      [
+        OptionNameEnum.aperture,
+        'Aperture',
+        ApertureEnum.apertureAuto,
+        'APERTURE_AUTO'
+      ],
       [OptionNameEnum.colorTemperature, 'ColorTemperature', 100, 100],
-      [OptionNameEnum.exposureCompensation, 'ExposureCompensation', ExposureCompensationEnum.p0_3, 'P0_3'],
-      [OptionNameEnum.exposureDelay, 'ExposureDelay', ExposureDelayEnum.delay2, 'DELAY_2'],
-      [OptionNameEnum.exposureProgram, 'ExposureProgram', ExposureProgramEnum.shutterPriority, 'SHUTTER_PRIORITY'],
-      [OptionNameEnum.fileFormat, 'FileFormat', FileFormatEnum.image_2K, 'IMAGE_2K'],
+      [
+        OptionNameEnum.exposureCompensation,
+        'ExposureCompensation',
+        ExposureCompensationEnum.p0_3,
+        'P0_3'
+      ],
+      [
+        OptionNameEnum.exposureDelay,
+        'ExposureDelay',
+        ExposureDelayEnum.delay2,
+        'DELAY_2'
+      ],
+      [
+        OptionNameEnum.exposureProgram,
+        'ExposureProgram',
+        ExposureProgramEnum.shutterPriority,
+        'SHUTTER_PRIORITY'
+      ],
+      [
+        OptionNameEnum.fileFormat,
+        'FileFormat',
+        FileFormatEnum.image_2K,
+        'IMAGE_2K'
+      ],
       [OptionNameEnum.filter, 'Filter', FilterEnum.hdr, 'HDR'],
       [OptionNameEnum.iso, 'Iso', IsoEnum.iso100, 'ISO_100'],
-      [OptionNameEnum.isoAutoHighLimit, 'IsoAutoHighLimit', IsoAutoHighLimitEnum.iso1250, 'ISO_1250'],
-      [OptionNameEnum.whiteBalance, 'WhiteBalance', WhiteBalanceEnum.auto, 'AUTO'],
-      [OptionNameEnum.whiteBalanceAutoStrength, 'WhiteBalanceAutoStrength', WhiteBalanceAutoStrengthEnum.off, 'OFF'],
+      [
+        OptionNameEnum.isoAutoHighLimit,
+        'IsoAutoHighLimit',
+        IsoAutoHighLimitEnum.iso1250,
+        'ISO_1250'
+      ],
+      [
+        OptionNameEnum.whiteBalance,
+        'WhiteBalance',
+        WhiteBalanceEnum.auto,
+        'AUTO'
+      ],
+      [
+        OptionNameEnum.whiteBalanceAutoStrength,
+        'WhiteBalanceAutoStrength',
+        WhiteBalanceAutoStrengthEnum.off,
+        'OFF'
+      ],
     ];
 
     Map<String, dynamic> optionMap = {};
@@ -1031,7 +1598,8 @@ void main() {
       options.setValue(data[i][0], data[i][2]);
     }
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       var arguments = methodCall.arguments as Map<dynamic, dynamic>;
       expect(arguments['captureMode'], CaptureModeEnum.image.rawValue);
 
@@ -1047,9 +1615,11 @@ void main() {
   });
 
   test('deleteMySetting', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'deleteMySetting');
-      expect(methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
+      expect(
+          methodCall.arguments['captureMode'], CaptureModeEnum.image.rawValue);
       return Future.value();
     });
     await platform.deleteMySetting(CaptureModeEnum.image);
@@ -1097,7 +1667,8 @@ void main() {
         "hasWebServer": false
       }
     ];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'listPlugins');
       return Future.value(data);
     });
@@ -1119,7 +1690,8 @@ void main() {
   test('setPlugin', () async {
     const packageName = 'android.example.com.tflitecamerademo';
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setPlugin');
 
       var arguments = methodCall.arguments as String;
@@ -1132,7 +1704,8 @@ void main() {
   test('startPlugin', () async {
     const packageName = 'android.example.com.tflitecamerademo';
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'startPlugin');
 
       var arguments = methodCall.arguments as String;
@@ -1143,7 +1716,8 @@ void main() {
   });
 
   test('stopPlugin', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'stopPlugin');
       return Future.value();
     });
@@ -1164,7 +1738,8 @@ void main() {
     </body>
     </html>
     """;
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'getPluginLicense');
 
       var arguments = methodCall.arguments as String;
@@ -1176,9 +1751,14 @@ void main() {
   });
 
   test('getPluginOrders', () async {
-    const plugins = ["com.theta360.usbstorage", "com.theta.remoteplayback", "com.theta360.undersidecover"];
+    const plugins = [
+      "com.theta360.usbstorage",
+      "com.theta.remoteplayback",
+      "com.theta360.undersidecover"
+    ];
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'getPluginOrders');
       return Future.value(plugins);
     });
@@ -1189,7 +1769,8 @@ void main() {
   test('setPluginOrders', () async {
     const packageNames = ['android.example.com.tflitecamerademo'];
 
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setPluginOrders');
 
       var arguments = methodCall.arguments as List<dynamic>;
@@ -1204,7 +1785,8 @@ void main() {
   test('setBluetoothDevice', () async {
     const name = '10107709';
     const uuid = '00000000-1111-2222-3333-555555555555';
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       expect(methodCall.method, 'setBluetoothDevice');
 
       var arguments = methodCall.arguments as String;
