@@ -152,6 +152,9 @@ class _XScreenState extends State<XScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
+                        // theta-client options not working
+                        // final options = Options();
+                        // options.imageStitching = ImageStitchingEnum.none;
                         final body = {
                           'name': 'camera.setOptions',
                           'parameters': {
@@ -177,6 +180,9 @@ class _XScreenState extends State<XScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
+                        // theta-client options not working
+                        // final options = Options();
+                        // options.imageStitching = ImageStitchingEnum.auto;
                         final body = {
                           'name': 'camera.setOptions',
                           'parameters': {

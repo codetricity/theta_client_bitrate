@@ -18,7 +18,9 @@ class _OptionScreenState extends State<OptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Still Image Settings'),
+      ),
       body: Column(children: [
         Expanded(
           flex: 3,
@@ -410,6 +412,18 @@ class _OptionScreenState extends State<OptionScreen> {
                   ),
                   TextButton(
                     onPressed: () async {
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.captureMode]);
+                      setState(() {
+                        response =
+                            'mode: ${responseOptions.captureMode.toString()}';
+                      });
+                    },
+                    child:
+                        const Text('current', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
                       final options = Options();
                       options.captureMode = CaptureModeEnum.image;
                       await _thetaClientFlutter.setOptions(options);
@@ -506,6 +520,60 @@ class _OptionScreenState extends State<OptionScreen> {
                       });
                     },
                     child: const Text('+1.0', style: TextStyle(fontSize: 18)),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    'Auto-Level',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.topBottomCorrection]);
+                      setState(() {
+                        response =
+                            'top bottom correction: ${responseOptions.topBottomCorrection.toString()}';
+                      });
+                    },
+                    child:
+                        const Text('Current', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.topBottomCorrection =
+                          TopBottomCorrectionOptionEnum.disapply;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.topBottomCorrection]);
+                      setState(() {
+                        response =
+                            'top bottom correction: ${responseOptions.topBottomCorrection.toString()}';
+                      });
+                    },
+                    child:
+                        const Text('Disapply', style: TextStyle(fontSize: 18)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final options = Options();
+                      options.topBottomCorrection =
+                          TopBottomCorrectionOptionEnum.apply;
+                      await _thetaClientFlutter.setOptions(options);
+                      final responseOptions = await _thetaClientFlutter
+                          .getOptions([OptionNameEnum.topBottomCorrection]);
+                      setState(() {
+                        response =
+                            'top bottom correction: ${responseOptions.topBottomCorrection.toString()}';
+                      });
+                    },
+                    child: const Text('Apply', style: TextStyle(fontSize: 18)),
                   ),
                 ],
               ),
