@@ -126,3 +126,13 @@ echo $JAVA_HOME
 /usr/lib/jvm/java-19-openjdk-amd64
 
 ```
+
+## Z1 tests
+
+![image](https://github.com/user-attachments/assets/535cdc8c-7554-41b2-8179-1fbb34c8766b)
+
+![image](https://github.com/user-attachments/assets/0f3a260c-24c2-4e35-8914-5783e8220636)
+
+
+![image](https://github.com/user-attachments/assets/bb77acdb-e299-4e81-8e7b-593915b68612)
+
